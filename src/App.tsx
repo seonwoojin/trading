@@ -1,25 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import reset from "styled-reset";
+import { createGlobalStyle } from "styled-components";
+import Home from "./Routes/Home";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+const GlobalStyle = createGlobalStyle`
+
+${reset}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Oswald','Holtwood One SC', 'Open Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.2;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+input[type="datetime-local"]::-webkit-inner-spin-button,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+a {
+  text-decoration: none;
+  color:inherit;
+}
+`;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <GlobalStyle />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
