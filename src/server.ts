@@ -25,6 +25,7 @@ console.log(process.env.NODE_ENV);
 
 router.use("/api", api.routes());
 
+app.proxy = true;
 app.use(bodyParser());
 app.use(serve(process.cwd() + "/build"));
 app.use(cors(corsOptions));
