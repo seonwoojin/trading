@@ -1730,11 +1730,11 @@ async function final(longFail, shortFail, ch) {
     // let longSadPrice2 = longEntryPrice * 1.0035;
     let longStopPrice = (
       longEntryPrice *
-      (0.996 - longFailure * 0.001)
+      (0.996 - longFailure * 0.0005)
     ).toFixed(fix);
     let longLimitPrice = (
       longEntryPrice *
-      (1.005 + longFailure * 0.001)
+      (1.005 + longFailure * 0.0005)
     ).toFixed(fix);
     json2 = await minusBalance(coinName);
     while (json2.errornum == 1) {
@@ -1745,11 +1745,11 @@ async function final(longFail, shortFail, ch) {
     let minusAmt = await getminusAmt(json2);
     let shortStopPrice = (
       shortEntryPrice *
-      (1.004 + shortFailure * 0.001)
+      (1.004 + shortFailure * 0.0005)
     ).toFixed(fix);
     let shortLimitPrice = (
       shortEntryPrice *
-      (0.995 - shortFailure * 0.001)
+      (0.995 - shortFailure * 0.0005)
     ).toFixed(fix);
     let stopLongSell = await FuturesstopLongSell(
       plusAmt,
