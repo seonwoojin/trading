@@ -2338,7 +2338,7 @@ async function scan() {
   return N;
 }
 
-//scan();
+scan();
 
 async function abc() {
   const order = await binance.futuresAllOrders("FTMUSDT");
@@ -2370,20 +2370,3 @@ async function inputBalance() {
     await sleep(10000);
   }
 }
-
-async function asd() {
-  let MarketSell = await binance.futuresMarketSell("XRPUSDT", 21.9, {
-    positionSide: "LONG",
-    type: "STOP_MARKET",
-    stopPrice: 0.4545,
-  });
-  if (MarketSell.code != null) {
-    if (MarketSell.code != -4164) {
-      console.log(MarketSell.msg);
-      return 1000;
-    }
-  }
-  console.log(MarketSell);
-}
-
-asd();
