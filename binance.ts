@@ -2338,8 +2338,7 @@ async function scan() {
   return N;
 }
 
-scan();
-
+home(1);
 async function abc() {
   const order = await binance.futuresAllOrders("FTMUSDT");
   console.log(order.length);
