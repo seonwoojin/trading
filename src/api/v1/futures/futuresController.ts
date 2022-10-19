@@ -235,3 +235,18 @@ export const getPosition = async (ctx: Context) => {
     console.log(err);
   }
 };
+
+async function abc() {
+  let balance;
+  const balances = await binance.futuresBalance(),
+    nums = Object.keys(balances);
+  for (let num of nums) {
+    let obj = balances[num];
+    if (obj.asset == "USDT") {
+      balance = obj.balance;
+    }
+  }
+  console.log(balance);
+}
+
+abc();

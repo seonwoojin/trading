@@ -29,7 +29,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "node build/server.js",
+    "start": "node server.js",
     "start:assets": "react-scripts start",
     "start:dev": "nodemon --watch src/ --exec ts-node src/server.ts",
     "build:assets": "react-scripts build",
