@@ -231,6 +231,7 @@ export const getPosition = async (ctx: Context) => {
     ctx.status = response.HTTP_OK;
   } catch (err) {
     ctx.status = response.HTTP_BAD_REQUEST;
+    ctx.body = err;
     console.log(err);
   }
 };
