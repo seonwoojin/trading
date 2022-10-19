@@ -26,12 +26,12 @@ router.use("/api", api.routes());
 
 app.proxy = true;
 app.use(bodyParser());
-app.use(serve(process.cwd() + "/build"));
+app.use(serve(process.cwd()));
 app.use(cors(corsOptions));
 app.use(router.routes()).use(router.allowedMethods());
 
 app.use(async (ctx) => {
-  await send(ctx, "index.html", { root: process.cwd() + "/build" });
+  await send(ctx, "index.html", { root: process.cwd() });
 });
 
 app.listen(PORT, handleListening);
