@@ -1,8 +1,8 @@
 import Binance from "node-binance-api";
 
 const binance = new Binance().options({
-  APIKEY: process.env.APIKEY,
-  APISECRET: process.env.APISECRET,
+  APIKEY: "cdnPPkgDmOA6M4qf3R4RFttRg4oHRSYdJvgyL0nQa2pTccWKN85OhCKKDklkzwAP",
+  APISECRET: "1WH46dc1WfGfkz8ucPTevhQ19vt1uCL5K9PTXjPx2EFYyzPmC4Z6YHDvKDX4rDy1",
   useServerTime: true,
   reconnect: true,
   recvWindow: 90000,
