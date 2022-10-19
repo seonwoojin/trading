@@ -21,7 +21,7 @@ const corsOptions = {
 };
 
 console.log(process.env.NODE_ENV);
-
+console.log(process.cwd());
 router.use("/api", api.routes());
 
 app.proxy = true;
