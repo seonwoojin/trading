@@ -1700,9 +1700,12 @@ async function final(longFail, shortFail, ch) {
       5 *
       2 ** shortFailure
     ).toFixed(bbfix);
+    console.log(longAmt);
     long = await FuturesLongBuy(longAmt, coinName);
     while (long == 1000) {
       await sleep(1000);
+      console.log(1);
+      console.log(longAmt);
       long = await FuturesLongBuy(longAmt, coinName);
       if (long == 2000) {
         break;
@@ -1710,6 +1713,7 @@ async function final(longFail, shortFail, ch) {
     }
     short = await FuturesShortSell(shortAmt, coinName);
     while (short == 1000) {
+      console.log(2);
       await sleep(1000);
       short = await FuturesShortSell(shortAmt, coinName);
       if (short == 2000) {
@@ -1719,6 +1723,7 @@ async function final(longFail, shortFail, ch) {
     await sleep(3000);
     json1 = await plusBalance(coinName);
     while (json1.errornum == 1) {
+      console.log(3);
       await sleep(1000);
       json1 = await plusBalance(coinName);
     }
@@ -2098,6 +2103,9 @@ async function home(coin) {
   let select = coin * 1;
   let num;
   secondreaBlalance = await GetBalances();
+  if (isNaN(secondreaBlalance)) {
+    return;
+  }
   switch (select) {
     case 1:
       coinName = "ETHUSDT";
@@ -2207,7 +2215,7 @@ async function home(coin) {
       FFM = firstFailure;
       SFM = secondFailure;
     }
-    if (FFM >= 10) {
+    if (FFM >= 11) {
       return;
     }
   }
