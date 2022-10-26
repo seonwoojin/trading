@@ -1704,8 +1704,6 @@ async function final(longFail, shortFail, ch) {
     long = await FuturesLongBuy(longAmt, coinName);
     while (long == 1000) {
       await sleep(1000);
-      console.log(1);
-      console.log(longAmt);
       long = await FuturesLongBuy(longAmt, coinName);
       if (long == 2000) {
         break;
@@ -1713,7 +1711,6 @@ async function final(longFail, shortFail, ch) {
     }
     short = await FuturesShortSell(shortAmt, coinName);
     while (short == 1000) {
-      console.log(2);
       await sleep(1000);
       short = await FuturesShortSell(shortAmt, coinName);
       if (short == 2000) {
@@ -1723,7 +1720,6 @@ async function final(longFail, shortFail, ch) {
     await sleep(3000);
     json1 = await plusBalance(coinName);
     while (json1.errornum == 1) {
-      console.log(3);
       await sleep(1000);
       json1 = await plusBalance(coinName);
     }
@@ -1746,6 +1742,8 @@ async function final(longFail, shortFail, ch) {
       await sleep(1000);
       json2 = await minusBalance(coinName);
     }
+    let longBadPrice = longEntryPrice * (1.006 + longFailure * 0.0005);
+    let longMoreBadPrice = longEntryPrice * (0.995 - longFailure * 0.0005);
     let shortEntryPrice = parseFloat(json2.entryPrice);
     let minusAmt = await getminusAmt(json2);
     let shortStopPrice = (
@@ -1756,6 +1754,8 @@ async function final(longFail, shortFail, ch) {
       shortEntryPrice *
       (0.995 - shortFailure * 0.0005)
     ).toFixed(fix);
+    let shortBadPrice = shortEntryPrice * (0.994 - shortFailure * 0.0005);
+    let shortMoreBadPrice = shortEntryPrice * (1.005 + shortFailure * 0.0005);
     let stopLongSell = await FuturesstopLongSell(
       plusAmt,
       coinName,
@@ -1846,6 +1846,46 @@ async function final(longFail, shortFail, ch) {
       plusAmt = await getplusAmt(json1);
       minusAmt = await getminusAmt(json2);
       let markPrice = parseFloat(json1.markPrice);
+      if (markPrice >= longBadPrice && plusAmt! > 0) {
+        long = await FuturesLongSell(plusAmt, coinName);
+        while (long == 1000) {
+          await sleep(1000);
+          long = await FuturesLongSell(plusAmt, coinName);
+          if (long == 2000) {
+            break;
+          }
+        }
+      }
+      if (markPrice <= longMoreBadPrice && plusAmt! > 0) {
+        long = await FuturesLongSell(plusAmt, coinName);
+        while (long == 1000) {
+          await sleep(1000);
+          long = await FuturesLongSell(plusAmt, coinName);
+          if (long == 2000) {
+            break;
+          }
+        }
+      }
+      if (markPrice <= shortBadPrice && minusAmt! > 0) {
+        short = await FuturesShortBuy(minusAmt, coinName);
+        while (short == 1000) {
+          await sleep(1000);
+          short = await FuturesShortBuy(minusAmt, coinName);
+          if (short == 2000) {
+            break;
+          }
+        }
+      }
+      if (markPrice >= shortMoreBadPrice && minusAmt! > 0) {
+        short = await FuturesShortBuy(minusAmt, coinName);
+        while (short == 1000) {
+          await sleep(1000);
+          short = await FuturesShortBuy(minusAmt, coinName);
+          if (short == 2000) {
+            break;
+          }
+        }
+      }
       if (plusAmt == 0 && longSwitch == false) {
         if (longEntryPrice >= markPrice) {
           longFailure++;
@@ -1866,7 +1906,6 @@ async function final(longFail, shortFail, ch) {
         }
         shortSwitch = true;
       }
-
       if (shortSwitch && longSwitch) {
         await cancleOrder(coinName);
         if (longFailure >= shortFailure) {
@@ -2126,10 +2165,13 @@ async function home(coin) {
       bbfix = 0;
       break;
   }
+  const manager = await getManager2(client, num + 3);
   while (true) {
-    const sorted = [FFM, SFM].sort();
+    const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
     FFM = sorted[1];
     SFM = sorted[0];
+    longSuccess = parseInt(manager[2]);
+    shortSuccess = parseInt(manager[3]);
     console.log(FFM, SFM);
     await inputManager(
       client,
@@ -2252,6 +2294,24 @@ async function getManager(client) {
 
     const response = (await sheets.spreadsheets.values.get(request)).data;
     return parseFloat(response.values[0][0]);
+  } catch (error) {
+    return 100;
+  }
+}
+
+async function getManager2(client, num) {
+  try {
+    const sheets = google.sheets({ version: "v4", auth: client });
+    const request = {
+      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
+
+      range: `manager!B${4}:E${4}`,
+
+      // , range : "twice"    // 범위를 지정하지 않으면 해당 Sheet의 모든 Shell 값을 가져온다.
+    };
+
+    const response = (await sheets.spreadsheets.values.get(request)).data;
+    return response.values[0];
   } catch (error) {
     return 100;
   }
