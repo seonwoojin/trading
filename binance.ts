@@ -1690,14 +1690,26 @@ async function final(longFail, shortFail, ch) {
       coinPrices = await GetPrices(coinName);
     }
     //amt = (secondreaBlalance / coinPrices / 13).toFixed(bbfix);
+    // const longAmt = (
+    //   (secondreaBlalance / coinPrices / reve) *
+    //   5 *
+    //   2 ** longFailure
+    // ).toFixed(bbfix);
+    // const shortAmt = (
+    //   (secondreaBlalance / coinPrices / reve) *
+    //   5 *
+    //   2 ** shortFailure
+    // ).toFixed(bbfix);
     const longAmt = (
-      (secondreaBlalance / coinPrices / reve) *
-      5 *
+      (0.05 / coinPrices) *
+      reve *
+      1.2 *
       2 ** longFailure
     ).toFixed(bbfix);
     const shortAmt = (
-      (secondreaBlalance / coinPrices / reve) *
-      5 *
+      (0.05 / coinPrices) *
+      reve *
+      1.2 *
       2 ** shortFailure
     ).toFixed(bbfix);
     console.log(longAmt);
@@ -1846,7 +1858,7 @@ async function final(longFail, shortFail, ch) {
       plusAmt = await getplusAmt(json1);
       minusAmt = await getminusAmt(json2);
       let markPrice = parseFloat(json1.markPrice);
-      if (markPrice >= longBadPrice && plusAmt! > 0) {
+      if (markPrice >= longBadPrice && plusAmt != 0) {
         long = await FuturesLongSell(plusAmt, coinName);
         while (long == 1000) {
           await sleep(1000);
@@ -1856,7 +1868,7 @@ async function final(longFail, shortFail, ch) {
           }
         }
       }
-      if (markPrice <= longMoreBadPrice && plusAmt! > 0) {
+      if (markPrice <= longMoreBadPrice && plusAmt != 0) {
         long = await FuturesLongSell(plusAmt, coinName);
         while (long == 1000) {
           await sleep(1000);
@@ -1866,7 +1878,7 @@ async function final(longFail, shortFail, ch) {
           }
         }
       }
-      if (markPrice <= shortBadPrice && minusAmt! > 0) {
+      if (markPrice <= shortBadPrice && minusAmt != 0) {
         short = await FuturesShortBuy(minusAmt, coinName);
         while (short == 1000) {
           await sleep(1000);
@@ -1876,7 +1888,7 @@ async function final(longFail, shortFail, ch) {
           }
         }
       }
-      if (markPrice >= shortMoreBadPrice && minusAmt! > 0) {
+      if (markPrice >= shortMoreBadPrice && minusAmt != 0) {
         short = await FuturesShortBuy(minusAmt, coinName);
         while (short == 1000) {
           await sleep(1000);
