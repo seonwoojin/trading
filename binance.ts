@@ -1901,6 +1901,7 @@ async function final(longFail, shortFail, ch) {
       if (plusAmt == 0 && longSwitch == false) {
         if (longEntryPrice >= markPrice) {
           longFailure++;
+          positionDir = "SHORT";
         } else if (markPrice >= longEntryPrice) {
           longFailure = 0;
           longSuccess++;
@@ -1911,6 +1912,7 @@ async function final(longFail, shortFail, ch) {
       if (minusAmt == 0 && shortSwitch == false) {
         if (shortEntryPrice <= markPrice) {
           shortFailure++;
+          positionDir = "LONG";
         } else if (markPrice <= shortEntryPrice) {
           shortFailure = 0;
           shortSuccess++;
