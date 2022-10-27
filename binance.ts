@@ -2177,13 +2177,20 @@ async function home(coin) {
       bbfix = 0;
       break;
   }
-  const manager = await getManager2(client, num + 3);
   while (true) {
-    const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
-    FFM = sorted[1];
-    SFM = sorted[0];
-    longSuccess = parseInt(manager[2]);
-    shortSuccess = parseInt(manager[3]);
+    const manager = await getManager2(client, num + 3);
+    if (manager[4] == "1" && FFM <= 1 && SFM <= 1) {
+      const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
+      FFM = sorted[1];
+      SFM = sorted[0];
+      longSuccess = parseInt(manager[2]);
+      shortSuccess = parseInt(manager[3]);
+      inputManagerFFM(client, num);
+    } else {
+      const sorted = [FFM, SFM].sort();
+      FFM = sorted[1];
+      SFM = sorted[0];
+    }
     console.log(FFM, SFM);
     await inputManager(
       client,
@@ -2293,6 +2300,24 @@ async function inputManagerFail(client, num) {
   }
 }
 
+async function inputManagerFFM(client, num) {
+  try {
+    const sheets = google.sheets({ version: "v4", auth: client });
+    let memberArray = new Array();
+    memberArray[0] = new Array("0");
+    const request = {
+      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
+      range: `manager!F${num + 3}`, // 범위를 지정해 주지 않으면 A1 행부터 데이터를 덮어 씌운다.
+      valueInputOption: "USER_ENTERED",
+      resource: { values: memberArray },
+    };
+    const response = await sheets.spreadsheets.values.update(request);
+    return 1;
+  } catch (error) {
+    return 100;
+  }
+}
+
 async function getManager(client) {
   try {
     const sheets = google.sheets({ version: "v4", auth: client });
@@ -2317,7 +2342,7 @@ async function getManager2(client, num) {
     const request = {
       spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
 
-      range: `manager!B${4}:E${4}`,
+      range: `manager!B${4}:F${4}`,
 
       // , range : "twice"    // 범위를 지정하지 않으면 해당 Sheet의 모든 Shell 값을 가져온다.
     };
