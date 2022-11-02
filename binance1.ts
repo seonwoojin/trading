@@ -2236,7 +2236,7 @@ async function home(coin) {
       await sleep(1000);
       stopAll = await getManagerStop(client);
     }
-    if (FFM >= 10) {
+    if (FFM >= 8) {
       let stop = await getManager(client);
       while (stop == 100) {
         await sleep(1000);
@@ -2481,7 +2481,7 @@ async function scan() {
   return N;
 }
 
-home(3);
+home(1);
 async function abc() {
   const order = await binance.futuresAllOrders("FTMUSDT");
   console.log(order.length);

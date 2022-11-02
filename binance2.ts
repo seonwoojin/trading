@@ -2236,7 +2236,7 @@ async function home(coin) {
       await sleep(1000);
       stopAll = await getManagerStop(client);
     }
-    if (FFM >= 10) {
+    if (FFM >= 8) {
       let stop = await getManager(client);
       while (stop == 100) {
         await sleep(1000);
