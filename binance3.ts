@@ -2172,7 +2172,7 @@ async function home(coin) {
       bbfix = 1;
       break;
     case 3:
-      coinName = "TRXUSDT";
+      coinName = "DOGEUSDT";
       num = 3;
       fix = 5;
       bbfix = 0;
