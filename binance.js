@@ -77,6 +77,26 @@ let flag;
 let totalProfit = 0;
 let successFail = 0;
 
+async function inputMoney(client, balance) {
+  try {
+    const sheets = google.sheets({ version: "v4", auth: client });
+    let memberArray = new Array();
+    memberArray[0] = new Array(balance.toString());
+    let inp = "manager!D2";
+    const request = {
+      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
+      range: inp, // 범위를 지정해 주지 않으면 A1 행부터 데이터를 덮어 씌운다.
+      valueInputOption: "USER_ENTERED",
+      resource: { values: memberArray },
+    };
+    const response = await sheets.spreadsheets.values.update(request);
+    return 1;
+  } catch (error) {
+    console.log(error);
+    return 100;
+  }
+}
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
