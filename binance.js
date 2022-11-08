@@ -1344,4 +1344,6 @@ async function inputBalance() {
   }
 }
 
+inputBalance();
+
 module.exports.home = home;
