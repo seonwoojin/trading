@@ -41,7 +41,9 @@
     "build:server": "tsc src/server.ts",
     "build": "react-scripts build && ./node_modules/typescript/bin/tsc",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:money1": "pm2 start binance1.js & pm2 start binance2.js & pm2 start binance3.js & pm2 start binance4.js & pm2 start binance5.js",
+    "start:money2": "pm2 start binance6.js & pm2 start binance7.js & pm2 start binance8.js & pm2 start binance9.js & pm2 start binance10.js"
   },
   "eslintConfig": {
     "extends": [
