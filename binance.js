@@ -1365,6 +1365,5 @@ async function inputBalance() {
   }
 }
 
-inputBalance();
-
 module.exports.home = home;
+module.exports.inputBalance = inputBalance;
