@@ -730,12 +730,12 @@ async function final(longFail, shortFail, ch) {
     //   2 ** shortFailure
     // ).toFixed(bbfix);
     const longAmt = (
-      (secondreaBlalance / 6700 / coinPrices) *
+      (secondreaBlalance / 8400 / coinPrices) *
       reve *
       2 ** longFailure
     ).toFixed(bbfix);
     const shortAmt = (
-      (secondreaBlalance / 6700 / coinPrices) *
+      (secondreaBlalance / 8400 / coinPrices) *
       reve *
       2 ** shortFailure
     ).toFixed(bbfix);
@@ -770,31 +770,31 @@ async function final(longFail, shortFail, ch) {
     // let longSadPrice2 = longEntryPrice * 1.0035;
     let longStopPrice = (
       longEntryPrice *
-      (0.996 - longFailure * 0.0005)
+      (0.991 - longFailure * 0.0005)
     ).toFixed(fix);
     let longLimitPrice = (
       longEntryPrice *
-      (1.005 + longFailure * 0.0005)
+      (1.01 + longFailure * 0.0005)
     ).toFixed(fix);
     json2 = await minusBalance(coinName);
     while (json2.errornum == 1) {
       await sleep(1000);
       json2 = await minusBalance(coinName);
     }
-    let longBadPrice = longEntryPrice * (1.006 + longFailure * 0.0005);
-    let longMoreBadPrice = longEntryPrice * (0.995 - longFailure * 0.0005);
+    let longBadPrice = longEntryPrice * (1.011 + longFailure * 0.0005);
+    let longMoreBadPrice = longEntryPrice * (0.99 - longFailure * 0.0005);
     let shortEntryPrice = parseFloat(json2.entryPrice);
     let minusAmt = await getminusAmt(json2);
     let shortStopPrice = (
       shortEntryPrice *
-      (1.004 + shortFailure * 0.0005)
+      (1.009 + shortFailure * 0.0005)
     ).toFixed(fix);
     let shortLimitPrice = (
       shortEntryPrice *
-      (0.995 - shortFailure * 0.0005)
+      (0.99 - shortFailure * 0.0005)
     ).toFixed(fix);
-    let shortBadPrice = shortEntryPrice * (0.994 - shortFailure * 0.0005);
-    let shortMoreBadPrice = shortEntryPrice * (1.005 + shortFailure * 0.0005);
+    let shortBadPrice = shortEntryPrice * (0.989 - shortFailure * 0.0005);
+    let shortMoreBadPrice = shortEntryPrice * (1.01 + shortFailure * 0.0005);
     let stopLongSell = await FuturesstopLongSell(
       plusAmt,
       coinName,
@@ -1053,6 +1053,7 @@ async function home(coin) {
       break;
   }
   while (true) {
+    await sleep(1000);
     let manager = await getManager2(client, num + 3);
     while (manager == 100) {
       await sleep(1000);
