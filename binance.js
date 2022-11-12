@@ -1,4 +1,5 @@
 const Binance = require("node-binance-api");
+require("dotenv").config();
 const { google } = require("googleapis");
 const keys = require("./credentials.json");
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
@@ -12,8 +13,8 @@ const client = new google.auth.JWT(
   ["https://www.googleapis.com/auth/spreadsheets"] // 사용자 시트 및 해당 속성에 대한 읽기/쓰기 액세스 허용
 );
 let binance = new Binance().options({
-  APIKEY: "cdnPPkgDmOA6M4qf3R4RFttRg4oHRSYdJvgyL0nQa2pTccWKN85OhCKKDklkzwAP",
-  APISECRET: "1WH46dc1WfGfkz8ucPTevhQ19vt1uCL5K9PTXjPx2EFYyzPmC4Z6YHDvKDX4rDy1",
+  APIKEY: process.env.APIKEY,
+  APISECRET: process.env.APISECRET,
   useServerTime: true,
   reconnect: true,
   recvWindow: 90000,
