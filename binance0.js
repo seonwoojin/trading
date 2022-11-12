@@ -1,3 +1,5 @@
 const { inputBalance } = require("./binance");
 
-inputBalance();
+//inputBalance();
+
+console.log(process.env.APIKEY);
