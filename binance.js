@@ -1130,9 +1130,9 @@ async function final(longFail, shortFail, ch) {
       coinPrices = await GetPrices(coinName);
     }
     let longStopPrice = (coinPrices * 0.985).toFixed(fix);
-    let longLimitPrice = (coinPrices * 1.02).toFixed(fix);
+    let longLimitPrice = (coinPrices * 1.03).toFixed(fix);
     let shortStopPrice = (coinPrices * 1.015).toFixed(fix);
-    let shortLimitPrice = (coinPrices * 0.98).toFixed(fix);
+    let shortLimitPrice = (coinPrices * 0.97).toFixed(fix);
     while (true) {
       coinPrices = await GetPrices(coinName);
       while (coinPrices == 100000) {
@@ -1175,10 +1175,10 @@ async function final(longFail, shortFail, ch) {
           secondFailure = 0;
         } else if (longFailure >= shortFailure) {
           firstFailure = longFailure;
-          secondFailure = shortFailure;
+          secondFailure = 0;
         } else if (shortFailure >= longFailure) {
           firstFailure = shortFailure;
-          secondFailure = longFailure;
+          secondFailure = 0;
         }
         console.log("1번 실패 :", firstFailure);
         console.log("1번 성공 :", longSuccess);
