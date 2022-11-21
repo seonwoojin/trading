@@ -78,12 +78,32 @@ let flag;
 let totalProfit = 0;
 let successFail = 0;
 
-async function inputMoney(client, balance) {
+async function inputMoney(client, balance, time) {
   try {
     const sheets = google.sheets({ version: "v4", auth: client });
     let memberArray = new Array();
-    memberArray[0] = new Array(balance.toString());
+    memberArray[0] = new Array(balance.toString(), time);
     let inp = "manager!D2";
+    const request = {
+      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
+      range: inp, // 범위를 지정해 주지 않으면 A1 행부터 데이터를 덮어 씌운다.
+      valueInputOption: "USER_ENTERED",
+      resource: { values: memberArray },
+    };
+    const response = await sheets.spreadsheets.values.update(request);
+    return 1;
+  } catch (error) {
+    console.log(error);
+    return 100;
+  }
+}
+
+async function inputDate(client, time) {
+  try {
+    const sheets = google.sheets({ version: "v4", auth: client });
+    let memberArray = new Array();
+    memberArray[0] = new Array(time);
+    let inp = "manager!F2";
     const request = {
       spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
       range: inp, // 범위를 지정해 주지 않으면 A1 행부터 데이터를 덮어 씌운다.
@@ -1666,22 +1686,18 @@ async function scan() {
 }
 
 async function inputBalance() {
-  const now = new Date();
-  const time = now.toLocaleString();
-  console.log(time);
   let mainBalacne = await GetBalances();
   let secondBalance;
   await inputMoney(client, mainBalacne);
   while (true) {
+    const now = new Date();
+    const time = now.toLocaleString();
     secondBalance = await GetBalances();
     if (secondBalance > mainBalacne) {
-      const now = new Date();
-      const time = now.toLocaleString();
-      console.log(time);
       mainBalacne = secondBalance;
-      console.log(mainBalacne);
-      await inputMoney(client, mainBalacne);
+      await inputMoney(client, mainBalacne, time);
     }
+    await inputDate(client, time);
     await sleep(10000);
   }
 }
