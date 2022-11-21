@@ -878,7 +878,7 @@ async function final(longFail, shortFail, ch) {
         }
       }
       if (plusAmt == 0 && longSwitch == false) {
-        if ((longEntryPrice + longLimitPrice) / 2 >= markPrice) {
+        if ((longEntryPrice * 1 + longLimitPrice * 1) / 2 >= markPrice) {
           longFailure++;
           positionDir = "SHORT";
           if (minusAmt !== 0) {
@@ -897,7 +897,7 @@ async function final(longFail, shortFail, ch) {
               );
             }
           }
-        } else if (markPrice >= (longEntryPrice + longLimitPrice) / 2) {
+        } else if (markPrice >= (longEntryPrice * 1 + longLimitPrice * 1) / 2) {
           longFailure = 0;
           longSuccess++;
           positionDir = "LONG";
@@ -905,10 +905,7 @@ async function final(longFail, shortFail, ch) {
         longSwitch = true;
       }
       if (minusAmt == 0 && shortSwitch == false) {
-        console.log((shortEntryPrice * 1 + shortLimitPrice * 1) / 2);
-        console.log(markPrice);
         if ((shortEntryPrice * 1 + shortLimitPrice * 1) / 2 <= markPrice) {
-          console.log(1);
           shortFailure++;
           positionDir = "LONG";
           if (plusAmt != 0) {
@@ -927,7 +924,10 @@ async function final(longFail, shortFail, ch) {
               );
             }
           }
-        } else if (markPrice <= (shortEntryPrice + shortLimitPrice) / 2) {
+        } else if (
+          markPrice <=
+          (shortEntryPrice * 1 + shortLimitPrice * 1) / 2
+        ) {
           shortFailure = 0;
           shortSuccess++;
           positionDir = "SHORT";
