@@ -1691,6 +1691,7 @@ async function inputBalance() {
   await inputMoney(client, mainBalacne);
   while (true) {
     const now = new Date();
+    now.setHours(now.getHours() + 9);
     const time = now.toLocaleString();
     secondBalance = await GetBalances();
     if (secondBalance > mainBalacne) {
