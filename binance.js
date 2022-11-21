@@ -730,12 +730,12 @@ async function final(longFail, shortFail, ch) {
     //   2 ** shortFailure
     // ).toFixed(bbfix);
     const longAmt = (
-      (secondreaBlalance / 2600 / coinPrices) *
+      (secondreaBlalance / 7000 / coinPrices) *
       reve *
       2 ** longFailure
     ).toFixed(bbfix);
     const shortAmt = (
-      (secondreaBlalance / 2600 / coinPrices) *
+      (secondreaBlalance / 7000 / coinPrices) *
       reve *
       2 ** shortFailure
     ).toFixed(bbfix);
@@ -878,10 +878,26 @@ async function final(longFail, shortFail, ch) {
         }
       }
       if (plusAmt == 0 && longSwitch == false) {
-        if (longEntryPrice >= markPrice) {
+        if ((longEntryPrice + longLimitPrice) / 2 >= markPrice) {
           longFailure++;
           positionDir = "SHORT";
-        } else if (markPrice >= longEntryPrice) {
+          if (minusAmt !== 0) {
+            console.log(123);
+            let stopShortBuy2 = await FuturesstopShortBuy(
+              minusAmt,
+              coinName,
+              shortEntryPrice
+            );
+            while (stopShortBuy2 == 1000) {
+              await sleep(1000);
+              stopShortBuy2 = await FuturesstopShortBuy(
+                minusAmt,
+                coinName,
+                shortEntryPrice
+              );
+            }
+          }
+        } else if (markPrice >= (longEntryPrice + longLimitPrice) / 2) {
           longFailure = 0;
           longSuccess++;
           positionDir = "LONG";
@@ -889,10 +905,29 @@ async function final(longFail, shortFail, ch) {
         longSwitch = true;
       }
       if (minusAmt == 0 && shortSwitch == false) {
-        if (shortEntryPrice <= markPrice) {
+        console.log((shortEntryPrice * 1 + shortLimitPrice * 1) / 2);
+        console.log(markPrice);
+        if ((shortEntryPrice * 1 + shortLimitPrice * 1) / 2 <= markPrice) {
+          console.log(1);
           shortFailure++;
           positionDir = "LONG";
-        } else if (markPrice <= shortEntryPrice) {
+          if (plusAmt != 0) {
+            console.log(456);
+            let stopLongSell2 = await FuturesstopLongSell(
+              plusAmt,
+              coinName,
+              longEntryPrice
+            );
+            while (stopLongSell2 == 1000) {
+              await sleep(1000);
+              stopLongSell2 = await FuturesstopLongSell(
+                plusAmt,
+                coinName,
+                longEntryPrice
+              );
+            }
+          }
+        } else if (markPrice <= (shortEntryPrice + shortLimitPrice) / 2) {
           shortFailure = 0;
           shortSuccess++;
           positionDir = "SHORT";
@@ -1278,7 +1313,7 @@ async function home(coin) {
       await sleep(1000);
       stopAll = await getManagerStop(client);
     }
-    if (FFM >= 6) {
+    if (FFM >= 7) {
       let stop = await getManager(client);
       while (stop == 100) {
         await sleep(1000);
@@ -1322,7 +1357,7 @@ async function home(coin) {
         await final(FFM, 0, false);
         FFM = firstFailure;
         SFM = secondFailure;
-      } else if (FFM == 1) {
+      } else if (FFM == 0) {
         await cancleOrder(coinName);
         let stop = await getManager(client);
         while (stop == 100) {
@@ -1355,7 +1390,7 @@ async function home(coin) {
         }
       }
     }
-    if (FFM >= 11) {
+    if (FFM >= 12) {
       return;
     }
   }
