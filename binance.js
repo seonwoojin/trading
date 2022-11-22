@@ -78,11 +78,11 @@ let flag;
 let totalProfit = 0;
 let successFail = 0;
 
-async function inputMoney(client, balance, time) {
+async function inputMoney(client, balance) {
   try {
     const sheets = google.sheets({ version: "v4", auth: client });
     let memberArray = new Array();
-    memberArray[0] = new Array(balance.toString(), time);
+    memberArray[0] = new Array(balance.toString());
     let inp = "manager!D2";
     const request = {
       spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
@@ -906,14 +906,14 @@ async function final(longFail, shortFail, ch) {
             let stopShortBuy2 = await FuturesstopShortBuy(
               minusAmt,
               coinName,
-              shortEntryPrice
+              shortEntryPrice.toFixed(fix)
             );
             while (stopShortBuy2 == 1000) {
               await sleep(1000);
               stopShortBuy2 = await FuturesstopShortBuy(
                 minusAmt,
                 coinName,
-                shortEntryPrice
+                shortEntryPrice.toFixed(fix)
               );
             }
           }
@@ -933,14 +933,14 @@ async function final(longFail, shortFail, ch) {
             let stopLongSell2 = await FuturesstopLongSell(
               plusAmt,
               coinName,
-              longEntryPrice
+              longEntryPrice.toFixed(fix)
             );
             while (stopLongSell2 == 1000) {
               await sleep(1000);
               stopLongSell2 = await FuturesstopLongSell(
                 plusAmt,
                 coinName,
-                longEntryPrice
+                longEntryPrice.toFixed(fix)
               );
             }
           }
@@ -1696,7 +1696,7 @@ async function inputBalance() {
     secondBalance = await GetBalances();
     if (secondBalance > mainBalacne) {
       mainBalacne = secondBalance;
-      await inputMoney(client, mainBalacne, time);
+      await inputMoney(client, mainBalacne);
     }
     await inputDate(client, time);
     await sleep(10000);
