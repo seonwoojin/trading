@@ -941,14 +941,14 @@ async function final(longFail, shortFail, ch) {
             let stopShortBuy2 = await FuturesstopShortBuy(
               minusAmt,
               coinName,
-              shortEntryPrice.toFixed(fix)
+              (shortEntryPrice * 1).toFixed(fix)
             );
             while (stopShortBuy2 == 1000) {
               await sleep(1000);
               stopShortBuy2 = await FuturesstopShortBuy(
                 minusAmt,
                 coinName,
-                shortEntryPrice.toFixed(fix)
+                (shortEntryPrice * 1).toFixed(fix)
               );
             }
           }
@@ -968,14 +968,14 @@ async function final(longFail, shortFail, ch) {
             let stopLongSell2 = await FuturesstopLongSell(
               plusAmt,
               coinName,
-              longEntryPrice.toFixed(fix)
+              (longEntryPrice * 1).toFixed(fix)
             );
             while (stopLongSell2 == 1000) {
               await sleep(1000);
               stopLongSell2 = await FuturesstopLongSell(
                 plusAmt,
                 coinName,
-                longEntryPrice.toFixed(fix)
+                (longEntryPrice * 1).toFixed(fix)
               );
             }
           }
