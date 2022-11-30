@@ -1287,205 +1287,209 @@ let coinName;
 let fails = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 async function home(coin) {
-  let FFM = 0;
-  let SFM = 0;
-  let select = coin * 1;
-  let num;
-  let start = true;
-  secondreaBlalance = await GetBalances();
-  if (isNaN(secondreaBlalance)) {
-    return;
-  }
-  switch (select) {
-    case 1:
-      coinName = "ETHUSDT";
-      num = 1;
-      fix = 2;
-      bbfix = 3;
-      break;
-    case 2:
-      coinName = "XRPUSDT";
-      num = 2;
-      fix = 4;
-      bbfix = 1;
-      break;
-    case 3:
-      coinName = "DOGEUSDT";
-      num = 3;
-      fix = 5;
-      bbfix = 0;
-      break;
-    case 4:
-      coinName = "ADAUSDT";
-      num = 4;
-      fix = 4;
-      bbfix = 0;
-      break;
-    case 5:
-      coinName = "EOSUSDT";
-      num = 5;
-      fix = 3;
-      bbfix = 1;
-      break;
-    case 6:
-      coinName = "BCHUSDT";
-      num = 6;
-      fix = 2;
-      bbfix = 3;
-      break;
-    case 7:
-      coinName = "BNBUSDT";
-      num = 7;
-      fix = 2;
-      bbfix = 2;
-      break;
-    case 8:
-      coinName = "ETCUSDT";
-      num = 8;
-      fix = 3;
-      bbfix = 2;
-      break;
-    case 9:
-      coinName = "LINKUSDT";
-      num = 9;
-      fix = 3;
-      bbfix = 2;
-      break;
-    case 10:
-      coinName = "DOTUSDT";
-      num = 10;
-      fix = 3;
-      bbfix = 1;
-      break;
-  }
-  while (true) {
-    await sleep(1000);
-    let manager = await getManager2(client, num + 3);
-    while (manager == 100) {
+  try {
+    let FFM = 0;
+    let SFM = 0;
+    let select = coin * 1;
+    let num;
+    let start = true;
+    secondreaBlalance = await GetBalances();
+    if (isNaN(secondreaBlalance)) {
+      return;
+    }
+    switch (select) {
+      case 1:
+        coinName = "ETHUSDT";
+        num = 1;
+        fix = 2;
+        bbfix = 3;
+        break;
+      case 2:
+        coinName = "XRPUSDT";
+        num = 2;
+        fix = 4;
+        bbfix = 1;
+        break;
+      case 3:
+        coinName = "DOGEUSDT";
+        num = 3;
+        fix = 5;
+        bbfix = 0;
+        break;
+      case 4:
+        coinName = "ADAUSDT";
+        num = 4;
+        fix = 4;
+        bbfix = 0;
+        break;
+      case 5:
+        coinName = "EOSUSDT";
+        num = 5;
+        fix = 3;
+        bbfix = 1;
+        break;
+      case 6:
+        coinName = "BCHUSDT";
+        num = 6;
+        fix = 2;
+        bbfix = 3;
+        break;
+      case 7:
+        coinName = "BNBUSDT";
+        num = 7;
+        fix = 2;
+        bbfix = 2;
+        break;
+      case 8:
+        coinName = "ETCUSDT";
+        num = 8;
+        fix = 3;
+        bbfix = 2;
+        break;
+      case 9:
+        coinName = "LINKUSDT";
+        num = 9;
+        fix = 3;
+        bbfix = 2;
+        break;
+      case 10:
+        coinName = "DOTUSDT";
+        num = 10;
+        fix = 3;
+        bbfix = 1;
+        break;
+    }
+    while (true) {
       await sleep(1000);
-      manager = await getManager2(client, num + 3);
-    }
-    if (start) {
-      const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
-      FFM = sorted[1];
-      SFM = sorted[0];
-      longSuccess = parseInt(manager[2]);
-      shortSuccess = parseInt(manager[3]);
-      inputManagerFFM(client, num);
-      start = false;
-    }
-    if (manager[4] == "1" && FFM <= 1 && SFM <= 1) {
-      const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
-      FFM = sorted[1];
-      SFM = sorted[0];
-      longSuccess = parseInt(manager[2]);
-      shortSuccess = parseInt(manager[3]);
-      inputManagerFFM(client, num);
-    } else {
-      const sorted = [FFM, SFM].sort();
-      FFM = sorted[1];
-      SFM = sorted[0];
-    }
-    console.log(FFM, SFM);
-    await inputManager(
-      client,
-      coinName,
-      num,
-      FFM,
-      prevSuccess,
-      longSuccess,
-      shortSuccess,
-      fails
-    );
-    let secondreaBlalance2 = await GetBalances();
-    if (secondreaBlalance2 > secondreaBlalance) {
-      secondreaBlalance = secondreaBlalance2;
-    }
-    let stopAll = await getManagerStop(client);
-    while (stopAll == 100) {
-      await sleep(1000);
-      stopAll = await getManagerStop(client);
-    }
-    if (FFM >= 7) {
-      let stop = await getManager(client);
-      while (stop == 100) {
+      let manager = await getManager2(client, num + 3);
+      while (manager == 100) {
         await sleep(1000);
-        stop = await getManager(client);
+        manager = await getManager2(client, num + 3);
       }
-      if (stop != num && stop != 0) {
-        await sleep(60000);
-        continue;
-      } else if (stop == 0) {
-        let input = await inputManagerFail(client, num);
-        while (input == 100) {
-          await sleep(1000);
-          input = await inputManagerFail(client, num);
-        }
+      if (start) {
+        const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
+        FFM = sorted[1];
+        SFM = sorted[0];
+        longSuccess = parseInt(manager[2]);
+        shortSuccess = parseInt(manager[3]);
+        inputManagerFFM(client, num);
+        start = false;
       }
-    }
-    if (stopAll == 1) {
-      // if (FFM >= 4) {
-      //   let stop = await getManager(client);
-      //   while (stop == 100) {
-      //     await sleep(1000);
-      //     stop = await getManager(client);
-      //   }
-      //   if (stop != num && stop != 0) {
-      //     console.log("대기중");
-      //     await sleep(60000);
-      //     continue;
-      //   } else if (stop == 0) {
-      //     let input = await inputManagerFail(client, num);
-      //     while (input == 100) {
-      //       await sleep(1000);
-      //       input = await inputManagerFail(client, num);
-      //     }
-      //   }
-      // }
-      if (SFM != 0 && FFM != 1) {
-        await final(FFM, SFM, false);
-        FFM = firstFailure;
-        SFM = secondFailure;
-      } else if (SFM == 0 && FFM != 1) {
-        await final(FFM, 0, false);
-        FFM = firstFailure;
-        SFM = secondFailure;
-      } else if (FFM == 0) {
-        await cancleOrder(coinName);
+      if (manager[4] == "1" && FFM <= 1 && SFM <= 1) {
+        const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
+        FFM = sorted[1];
+        SFM = sorted[0];
+        longSuccess = parseInt(manager[2]);
+        shortSuccess = parseInt(manager[3]);
+        inputManagerFFM(client, num);
+      } else {
+        const sorted = [FFM, SFM].sort();
+        FFM = sorted[1];
+        SFM = sorted[0];
+      }
+      console.log(FFM, SFM);
+      await inputManager(
+        client,
+        coinName,
+        num,
+        FFM,
+        prevSuccess,
+        longSuccess,
+        shortSuccess,
+        fails
+      );
+      let secondreaBlalance2 = await GetBalances();
+      if (secondreaBlalance2 > secondreaBlalance) {
+        secondreaBlalance = secondreaBlalance2;
+      }
+      let stopAll = await getManagerStop(client);
+      while (stopAll == 100) {
+        await sleep(1000);
+        stopAll = await getManagerStop(client);
+      }
+      if (FFM >= 7) {
         let stop = await getManager(client);
         while (stop == 100) {
           await sleep(1000);
           stop = await getManager(client);
         }
-        if (stop == num) {
+        if (stop != num && stop != 0) {
+          await sleep(60000);
+          continue;
+        } else if (stop == 0) {
+          let input = await inputManagerFail(client, num);
+          while (input == 100) {
+            await sleep(1000);
+            input = await inputManagerFail(client, num);
+          }
+        }
+      }
+      if (stopAll == 1) {
+        // if (FFM >= 4) {
+        //   let stop = await getManager(client);
+        //   while (stop == 100) {
+        //     await sleep(1000);
+        //     stop = await getManager(client);
+        //   }
+        //   if (stop != num && stop != 0) {
+        //     console.log("대기중");
+        //     await sleep(60000);
+        //     continue;
+        //   } else if (stop == 0) {
+        //     let input = await inputManagerFail(client, num);
+        //     while (input == 100) {
+        //       await sleep(1000);
+        //       input = await inputManagerFail(client, num);
+        //     }
+        //   }
+        // }
+        if (SFM != 0 && FFM != 1) {
+          await final(FFM, SFM, false);
+          FFM = firstFailure;
+          SFM = secondFailure;
+        } else if (SFM == 0 && FFM != 1) {
+          await final(FFM, 0, false);
+          FFM = firstFailure;
+          SFM = secondFailure;
+        } else if (FFM == 0) {
+          await cancleOrder(coinName);
+          let stop = await getManager(client);
+          while (stop == 100) {
+            await sleep(1000);
+            stop = await getManager(client);
+          }
+          if (stop == num) {
+            let input = await inputManagerFail(client, 0);
+            while (input == 100) {
+              await sleep(1000);
+              input = await inputManagerFail(client, 0);
+            }
+          }
+          return;
+        }
+      } else {
+        await final(FFM, SFM, false);
+        FFM = firstFailure;
+        SFM = secondFailure;
+        let stop = await getManager(client);
+        while (stop == 100) {
+          await sleep(1000);
+          stop = await getManager(client);
+        }
+        if (stop == num && FFM < 5) {
           let input = await inputManagerFail(client, 0);
           while (input == 100) {
             await sleep(1000);
             input = await inputManagerFail(client, 0);
           }
         }
+      }
+      if (FFM >= 12) {
         return;
       }
-    } else {
-      await final(FFM, SFM, false);
-      FFM = firstFailure;
-      SFM = secondFailure;
-      let stop = await getManager(client);
-      while (stop == 100) {
-        await sleep(1000);
-        stop = await getManager(client);
-      }
-      if (stop == num && FFM < 5) {
-        let input = await inputManagerFail(client, 0);
-        while (input == 100) {
-          await sleep(1000);
-          input = await inputManagerFail(client, 0);
-        }
-      }
     }
-    if (FFM >= 12) {
-      return;
-    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
