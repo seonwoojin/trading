@@ -813,9 +813,11 @@ async function final(longFail, shortFail, ch) {
   if (positionDir == "NONE" && shoot == 1) {
     longFailure = longFail * 1;
     shortFailure = shortFail * 1;
+    thisPositionDir = "LONG";
   } else if (positionDir == "NONE" && shoot == 2) {
     longFailure = shortFail * 1;
     shortFailure = longFail * 1;
+    thisPositionDir = "SHORT";
   } else if (positionDir == "LONG") {
     if (longFail >= shortFail) {
       longFailure = longFail * 1;
