@@ -177,7 +177,13 @@ async function FuturesLongBuy(x, y) {
   }
 }
 
-async function enterPosition(longAmt, shortAmt, coinName) {
+async function enterPosition(
+  longAmt,
+  shortAmt,
+  coinName,
+  prevSuccess,
+  positionDir
+) {
   try {
     let MarketBuy = await binance.futuresMarketBuy(coinName, longAmt, {
       positionSide: "LONG",
@@ -207,6 +213,9 @@ async function enterPosition(longAmt, shortAmt, coinName) {
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
         let longStopPrice = (obj.entryPrice * 0.985).toFixed(fix);
         let longLimitPrice = (obj.entryPrice * 1.03).toFixed(fix);
+        if (positionDir === "LONG" && prevSuccess) {
+          longLimitPrice = (obj.entryPrice * 1.02).toFixed(fix);
+        }
         let MarketSell = await binance.futuresMarketSell(coinName, longAmt, {
           positionSide: "LONG",
           type: "STOP_MARKET",
@@ -236,6 +245,9 @@ async function enterPosition(longAmt, shortAmt, coinName) {
       if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
         let shortStopPrice = (obj.entryPrice * 1.015).toFixed(fix);
         let shortLimitPrice = (obj.entryPrice * 0.97).toFixed(fix);
+        if (positionDir === "SHORT" && prevSuccess) {
+          shortLimitPrice = (obj.entryPrice * 0.98).toFixed(fix);
+        }
         let MarketBuy = await binance.futuresMarketBuy(coinName, shortAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
@@ -781,6 +793,7 @@ let shortSuccess = 0;
 let firstEmpty = 0;
 let secondeEmpty = 0;
 let positionDir = "NONE";
+let prevSuccess = false;
 
 async function final(longFail, shortFail, ch) {
   let longSwitch = false;
@@ -789,7 +802,10 @@ async function final(longFail, shortFail, ch) {
   let shortFailure;
   let plusAmt;
   let minusAmt;
+  let prevLong = false;
+  let prevShort = false;
   let shoot = await GetRandom();
+  let thisPositionDir = positionDir;
   if ((longFail * 1 > 0 || shortFail * 1 > 0) && ch) {
     longFailure = longFail * 1;
     shortFailure = shortFail * 1;
@@ -853,7 +869,13 @@ async function final(longFail, shortFail, ch) {
       reve *
       2 ** shortFailure
     ).toFixed(bbfix);
-    let enter = await enterPosition(longAmt, shortAmt, coinName);
+    let enter = await enterPosition(
+      longAmt,
+      shortAmt,
+      coinName,
+      prevSuccess,
+      positionDir
+    );
     if (enter === 1000) {
       await cancleOrder(coinname);
       await sleep(60000);
@@ -934,10 +956,17 @@ async function final(longFail, shortFail, ch) {
       }
       if (plusAmt == 0 && longSwitch == false) {
         if ((longEntryPrice * 1 + longLimitPrice * 1) / 2 >= markPrice) {
+          if (prevLong) {
+            prevSuccess = true;
+          } else {
+            prevSuccess = false;
+          }
           longFailure++;
           positionDir = "SHORT";
           if (minusAmt !== 0) {
-            console.log(123);
+            if (thisPositionDir == "SHORT") {
+              prevShort = true;
+            }
             let stopShortBuy2 = await FuturesstopShortBuy(
               minusAmt,
               coinName,
@@ -953,6 +982,7 @@ async function final(longFail, shortFail, ch) {
             }
           }
         } else if (markPrice >= (longEntryPrice * 1 + longLimitPrice * 1) / 2) {
+          prevSuccess = false;
           longFailure = 0;
           longSuccess++;
           positionDir = "LONG";
@@ -961,10 +991,17 @@ async function final(longFail, shortFail, ch) {
       }
       if (minusAmt == 0 && shortSwitch == false) {
         if ((shortEntryPrice * 1 + shortLimitPrice * 1) / 2 <= markPrice) {
+          if (prevShort) {
+            prevSuccess = true;
+          } else {
+            prevSuccess = false;
+          }
           shortFailure++;
           positionDir = "LONG";
           if (plusAmt != 0) {
-            console.log(456);
+            if (thisPositionDir == "LONG") {
+              prevLong = true;
+            }
             let stopLongSell2 = await FuturesstopLongSell(
               plusAmt,
               coinName,
@@ -983,6 +1020,7 @@ async function final(longFail, shortFail, ch) {
           markPrice <=
           (shortEntryPrice * 1 + shortLimitPrice * 1) / 2
         ) {
+          prevSuccess = false;
           shortFailure = 0;
           shortSuccess++;
           positionDir = "SHORT";
@@ -1354,7 +1392,7 @@ async function home(coin) {
       coinName,
       num,
       FFM,
-      SFM,
+      prevSuccess,
       longSuccess,
       shortSuccess,
       fails
