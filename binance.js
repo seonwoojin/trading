@@ -1367,26 +1367,15 @@ async function home(coin) {
         manager = await getManager2(client, num + 3);
       }
       if (start) {
-        const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
-        FFM = sorted[1];
-        SFM = sorted[0];
+        FFM = parseInt(manager[0]);
         longSuccess = parseInt(manager[2]);
         shortSuccess = parseInt(manager[3]);
         inputManagerFFM(client, num);
         start = false;
       }
-      if (manager[4] == "1" && FFM <= 1 && SFM <= 1) {
-        const sorted = [parseInt(manager[0]), parseInt(manager[1])].sort();
-        FFM = sorted[1];
-        SFM = sorted[0];
-        longSuccess = parseInt(manager[2]);
-        shortSuccess = parseInt(manager[3]);
-        inputManagerFFM(client, num);
-      } else {
-        const sorted = [FFM, SFM].sort();
-        FFM = sorted[1];
-        SFM = sorted[0];
-      }
+      const sorted = [FFM, SFM].sort();
+      FFM = sorted[1];
+      SFM = sorted[0];
       console.log(FFM, SFM);
       await inputManager(
         client,
