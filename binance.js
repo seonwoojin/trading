@@ -182,7 +182,9 @@ async function enterPosition(
   shortAmt,
   coinName,
   prevSuccess,
-  positionDir
+  positionDir,
+  longFailure,
+  shortFailure
 ) {
   try {
     let MarketBuy = await binance.futuresMarketBuy(coinName, longAmt, {
@@ -213,7 +215,7 @@ async function enterPosition(
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
         let longStopPrice = (obj.entryPrice * 0.985).toFixed(fix);
         let longLimitPrice = (obj.entryPrice * 1.03).toFixed(fix);
-        if (positionDir === "LONG" && prevSuccess) {
+        if ((positionDir === "LONG" && prevSuccess) || longFailure >= 12) {
           longLimitPrice = (obj.entryPrice * 1.02).toFixed(fix);
         }
         let MarketSell = await binance.futuresMarketSell(coinName, longAmt, {
@@ -245,7 +247,7 @@ async function enterPosition(
       if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
         let shortStopPrice = (obj.entryPrice * 1.015).toFixed(fix);
         let shortLimitPrice = (obj.entryPrice * 0.97).toFixed(fix);
-        if (positionDir === "SHORT" && prevSuccess) {
+        if ((positionDir === "SHORT" && prevSuccess) || shortFailure >= 12) {
           shortLimitPrice = (obj.entryPrice * 0.98).toFixed(fix);
         }
         let MarketBuy = await binance.futuresMarketBuy(coinName, shortAmt, {
@@ -862,12 +864,12 @@ async function final(longFail, shortFail, ch) {
     //   2 ** shortFailure
     // ).toFixed(bbfix);
     const longAmt = (
-      (secondreaBlalance / 7000 / coinPrices) *
+      (secondreaBlalance / 9000 / coinPrices) *
       reve *
       2 ** longFailure
     ).toFixed(bbfix);
     const shortAmt = (
-      (secondreaBlalance / 7000 / coinPrices) *
+      (secondreaBlalance / 9000 / coinPrices) *
       reve *
       2 ** shortFailure
     ).toFixed(bbfix);
@@ -876,7 +878,9 @@ async function final(longFail, shortFail, ch) {
       shortAmt,
       coinName,
       prevSuccess,
-      positionDir
+      positionDir,
+      longFailure,
+      shortFailure
     );
     if (enter === 1000) {
       await cancleOrder(coinname);
@@ -1297,6 +1301,7 @@ async function home(coin) {
     let start = true;
     secondreaBlalance = await GetBalances();
     if (isNaN(secondreaBlalance)) {
+      console.log("Nan");
       return;
     }
     switch (select) {
@@ -1365,7 +1370,7 @@ async function home(coin) {
       await sleep(1000);
       let manager = await getManager2(client, num + 3);
       while (manager == 100) {
-        await sleep(1000);
+        await sleep(5000);
         manager = await getManager2(client, num + 3);
       }
       if (start) {
@@ -1379,7 +1384,7 @@ async function home(coin) {
       FFM = sorted[1];
       SFM = sorted[0];
       console.log(FFM, SFM);
-      await inputManager(
+      const input = await inputManager(
         client,
         coinName,
         num,
@@ -1389,19 +1394,32 @@ async function home(coin) {
         shortSuccess,
         fails
       );
+      while (input == 100) {
+        await sleep(5000);
+        input = await inputManager(
+          client,
+          coinName,
+          num,
+          FFM,
+          prevSuccess,
+          longSuccess,
+          shortSuccess,
+          fails
+        );
+      }
       let secondreaBlalance2 = await GetBalances();
       if (secondreaBlalance2 > secondreaBlalance) {
         secondreaBlalance = secondreaBlalance2;
       }
       let stopAll = await getManagerStop(client);
       while (stopAll == 100) {
-        await sleep(1000);
+        await sleep(5000);
         stopAll = await getManagerStop(client);
       }
       if (FFM >= 7) {
         let stop = await getManager(client);
         while (stop == 100) {
-          await sleep(1000);
+          await sleep(5000);
           stop = await getManager(client);
         }
         if (stop != num && stop != 0) {
@@ -1410,7 +1428,7 @@ async function home(coin) {
         } else if (stop == 0) {
           let input = await inputManagerFail(client, num);
           while (input == 100) {
-            await sleep(1000);
+            await sleep(5000);
             input = await inputManagerFail(client, num);
           }
         }
@@ -1446,13 +1464,13 @@ async function home(coin) {
           await cancleOrder(coinName);
           let stop = await getManager(client);
           while (stop == 100) {
-            await sleep(1000);
+            await sleep(5000);
             stop = await getManager(client);
           }
           if (stop == num) {
             let input = await inputManagerFail(client, 0);
             while (input == 100) {
-              await sleep(1000);
+              await sleep(5000);
               input = await inputManagerFail(client, 0);
             }
           }
@@ -1464,18 +1482,18 @@ async function home(coin) {
         SFM = secondFailure;
         let stop = await getManager(client);
         while (stop == 100) {
-          await sleep(1000);
+          await sleep(5000);
           stop = await getManager(client);
         }
         if (stop == num && FFM < 5) {
           let input = await inputManagerFail(client, 0);
           while (input == 100) {
-            await sleep(1000);
+            await sleep(5000);
             input = await inputManagerFail(client, 0);
           }
         }
       }
-      if (FFM >= 12) {
+      if (FFM >= 13) {
         return;
       }
     }
