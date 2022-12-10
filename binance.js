@@ -883,7 +883,7 @@ async function final(longFail, shortFail, ch) {
       shortFailure
     );
     if (enter === 1000) {
-      await cancleOrder(coinname);
+      await cancleOrder(coinName);
       await sleep(60000);
       return;
     }
@@ -901,7 +901,13 @@ async function final(longFail, shortFail, ch) {
     let longEntryPrice = json1.entryPrice;
     let shortEntryPrice = json2.entryPrice;
     let longLimitPrice = longEntryPrice * 1.03;
+    if (positionDir === "LONG" && prevSuccess) {
+      longLimitPrice = longEntryPrice * 1.02;
+    }
     let shortLimitPrice = shortEntryPrice * 0.97;
+    if (positionDir === "SHORT" && prevSuccess) {
+      shortLimitPrice = shortEntryPrice * 0.98;
+    }
     let longBadPrice = longEntryPrice * 1.031;
     let longMoreBadPrice = longEntryPrice * 0.984;
     let shortBadPrice = shortEntryPrice * 0.969;
