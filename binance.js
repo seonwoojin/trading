@@ -804,10 +804,9 @@ async function final(longFail, shortFail, ch) {
   let shortFailure;
   let plusAmt;
   let minusAmt;
-  let prevLong = false;
-  let prevShort = false;
   let shoot = await GetRandom();
   let thisPositionDir = positionDir;
+  console.log(thisPositionDir);
   if ((longFail * 1 > 0 || shortFail * 1 > 0) && ch) {
     longFailure = longFail * 1;
     shortFailure = shortFail * 1;
@@ -968,7 +967,7 @@ async function final(longFail, shortFail, ch) {
       }
       if (plusAmt == 0 && longSwitch == false) {
         if ((longEntryPrice * 1 + longLimitPrice * 1) / 2 >= markPrice) {
-          if (prevLong) {
+          if (thisPositionDir == "LONG") {
             prevSuccess = true;
           } else {
             prevSuccess = false;
@@ -976,9 +975,6 @@ async function final(longFail, shortFail, ch) {
           longFailure++;
           positionDir = "SHORT";
           if (minusAmt !== 0) {
-            if (thisPositionDir == "SHORT") {
-              prevShort = true;
-            }
             let stopShortBuy2 = await FuturesstopShortBuy(
               minusAmt,
               coinName,
@@ -1003,7 +999,7 @@ async function final(longFail, shortFail, ch) {
       }
       if (minusAmt == 0 && shortSwitch == false) {
         if ((shortEntryPrice * 1 + shortLimitPrice * 1) / 2 <= markPrice) {
-          if (prevShort) {
+          if (thisPositionDir == "SHORT") {
             prevSuccess = true;
           } else {
             prevSuccess = false;
@@ -1011,9 +1007,6 @@ async function final(longFail, shortFail, ch) {
           shortFailure++;
           positionDir = "LONG";
           if (plusAmt != 0) {
-            if (thisPositionDir == "LONG") {
-              prevLong = true;
-            }
             let stopLongSell2 = await FuturesstopLongSell(
               plusAmt,
               coinName,
@@ -1370,6 +1363,12 @@ async function home(coin) {
         num = 10;
         fix = 3;
         bbfix = 1;
+        break;
+      case 11:
+        coinName = "TRXUSDT";
+        num = 11;
+        fix = 5;
+        bbfix = 0;
         break;
     }
     while (true) {
