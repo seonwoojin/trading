@@ -804,21 +804,14 @@ async function final(longFail, shortFail, ch) {
   let shortFailure;
   let plusAmt;
   let minusAmt;
-  let shoot = await GetRandom();
   let thisPositionDir = positionDir;
-  console.log(thisPositionDir);
   if ((longFail * 1 > 0 || shortFail * 1 > 0) && ch) {
     longFailure = longFail * 1;
     shortFailure = shortFail * 1;
   }
-  if (positionDir == "NONE" && shoot == 1) {
-    longFailure = longFail * 1;
-    shortFailure = shortFail * 1;
-    thisPositionDir = "LONG";
-  } else if (positionDir == "NONE" && shoot == 2) {
+  if (positionDir == "NONE") {
     longFailure = shortFail * 1;
     shortFailure = longFail * 1;
-    thisPositionDir = "SHORT";
   } else if (positionDir == "LONG") {
     if (longFail >= shortFail) {
       longFailure = longFail * 1;
@@ -967,7 +960,7 @@ async function final(longFail, shortFail, ch) {
       }
       if (plusAmt == 0 && longSwitch == false) {
         if ((longEntryPrice * 1 + longLimitPrice * 1) / 2 >= markPrice) {
-          if (thisPositionDir == "LONG") {
+          if (thisPositionDir == "LONG" || thisPositionDir == "NONE") {
             prevSuccess = true;
           } else {
             prevSuccess = false;
@@ -999,7 +992,7 @@ async function final(longFail, shortFail, ch) {
       }
       if (minusAmt == 0 && shortSwitch == false) {
         if ((shortEntryPrice * 1 + shortLimitPrice * 1) / 2 <= markPrice) {
-          if (thisPositionDir == "SHORT") {
+          if (thisPositionDir == "SHORT" || thisPositionDir == "NONE") {
             prevSuccess = true;
           } else {
             prevSuccess = false;
@@ -1713,7 +1706,6 @@ async function inputManager(
   fails
 ) {
   try {
-    console.log(...fails);
     const sheets = google.sheets({ version: "v4", auth: client });
     let memberArray = new Array();
     memberArray[0] = new Array(
