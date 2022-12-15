@@ -959,8 +959,9 @@ async function final(longFail, shortFail, ch) {
         }
       }
       if (plusAmt == 0 && longSwitch == false) {
+        d;
         if ((longEntryPrice * 1 + longLimitPrice * 1) / 2 >= markPrice) {
-          if (thisPositionDir == "LONG" || thisPositionDir == "NONE") {
+          if (thisPositionDir == "LONG" || longFail * 1 + shortFail * 1 == 0) {
             prevSuccess = true;
           } else {
             prevSuccess = false;
@@ -992,7 +993,7 @@ async function final(longFail, shortFail, ch) {
       }
       if (minusAmt == 0 && shortSwitch == false) {
         if ((shortEntryPrice * 1 + shortLimitPrice * 1) / 2 <= markPrice) {
-          if (thisPositionDir == "SHORT" || thisPositionDir == "NONE") {
+          if (thisPositionDir == "SHORT" || longFail * 1 + shortFail * 1 == 0) {
             prevSuccess = true;
           } else {
             prevSuccess = false;
