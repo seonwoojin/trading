@@ -959,7 +959,6 @@ async function final(longFail, shortFail, ch) {
         }
       }
       if (plusAmt == 0 && longSwitch == false) {
-        d;
         if (longEntryPrice * 1.01 >= markPrice) {
           if (thisPositionDir == "LONG" || longFail * 1 + shortFail * 1 == 0) {
             prevSuccess = true;
