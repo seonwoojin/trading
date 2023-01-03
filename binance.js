@@ -36,7 +36,7 @@ let json2 = {
   unRealizedProfit: "",
   markPrice: "",
 };
-let reve;
+let leve;
 let bb;
 let bb2;
 let ris;
@@ -214,19 +214,21 @@ async function enterPosition(
       if (size == 0 && obj.symbol != coinName) continue;
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
         let longStopPrice = (obj.entryPrice * 0.985).toFixed(fix);
-        let longLimitPrice = (obj.entryPrice * 1.03).toFixed(fix);
+        let longLimitPrice = (obj.entryPrice * 1.02).toFixed(fix);
         if ((positionDir === "LONG" && prevSuccess) || longFailure >= 12) {
-          longLimitPrice = (obj.entryPrice * 1.02).toFixed(fix);
+          longLimitPrice = (obj.entryPrice * 1.015).toFixed(fix);
         }
-        let MarketSell = await binance.futuresMarketSell(coinName, longAmt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: longStopPrice,
-        });
-        if (MarketSell.code != null) {
-          if (MarketSell.code != -4164) {
-            console.log(MarketSell.msg);
-            return 1000;
+        if (longFailure < 12) {
+          let MarketSell = await binance.futuresMarketSell(coinName, longAmt, {
+            positionSide: "LONG",
+            type: "STOP_MARKET",
+            stopPrice: longStopPrice,
+          });
+          if (MarketSell.code != null) {
+            if (MarketSell.code != -4164) {
+              console.log(MarketSell.msg);
+              return 1000;
+            }
           }
         }
         let limitSell = await binance.futuresSell(
@@ -246,19 +248,21 @@ async function enterPosition(
       }
       if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
         let shortStopPrice = (obj.entryPrice * 1.015).toFixed(fix);
-        let shortLimitPrice = (obj.entryPrice * 0.97).toFixed(fix);
+        let shortLimitPrice = (obj.entryPrice * 0.98).toFixed(fix);
         if ((positionDir === "SHORT" && prevSuccess) || shortFailure >= 12) {
-          shortLimitPrice = (obj.entryPrice * 0.98).toFixed(fix);
+          shortLimitPrice = (obj.entryPrice * 0.985).toFixed(fix);
         }
-        let MarketBuy = await binance.futuresMarketBuy(coinName, shortAmt, {
-          positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: shortStopPrice,
-        });
-        if (MarketBuy.code != null) {
-          if (MarketBuy.code != -4164) {
-            console.log(MarketBuy.msg);
-            return 1000;
+        if (shortFailure < 12) {
+          let MarketBuy = await binance.futuresMarketBuy(coinName, shortAmt, {
+            positionSide: "SHORT",
+            type: "STOP_MARKET",
+            stopPrice: shortStopPrice,
+          });
+          if (MarketBuy.code != null) {
+            if (MarketBuy.code != -4164) {
+              console.log(MarketBuy.msg);
+              return 1000;
+            }
           }
         }
         let limitBuy = await binance.futuresBuy(
@@ -835,9 +839,9 @@ async function final(longFail, shortFail, ch) {
       console.log("UTCK 켜세요");
       return;
     }
-    reve = 50;
+    leve = 40;
     await binance.useServerTime();
-    await Leverage(reve, coinName);
+    await Leverage(leve, coinName);
     await sleep(1000);
     coinPrices = await GetPrices(coinName);
     while (coinPrices == 100000) {
@@ -846,23 +850,23 @@ async function final(longFail, shortFail, ch) {
     }
     //amt = (secondreaBlalance / coinPrices / 13).toFixed(bbfix);
     // const longAmt = (
-    //   (secondreaBlalance / coinPrices / reve) *
+    //   (secondreaBlalance / coinPrices / leve) *
     //   5 *
     //   2 ** longFailure
     // ).toFixed(bbfix);
     // const shortAmt = (
-    //   (secondreaBlalance / coinPrices / reve) *
+    //   (secondreaBlalance / coinPrices / leve) *
     //   5 *
     //   2 ** shortFailure
     // ).toFixed(bbfix);
     const longAmt = (
       (secondreaBlalance / 9000 / coinPrices) *
-      reve *
+      leve *
       2 ** longFailure
     ).toFixed(bbfix);
     const shortAmt = (
       (secondreaBlalance / 9000 / coinPrices) *
-      reve *
+      leve *
       2 ** shortFailure
     ).toFixed(bbfix);
     let enter = await enterPosition(
@@ -1488,7 +1492,7 @@ async function home(coin) {
           }
         }
       }
-      if (FFM >= 13) {
+      if (FFM >= 10) {
         return;
       }
     }

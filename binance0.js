@@ -1,3 +1,3 @@
-const { inputBalance } = require("./binance");
+const { inputBalance } = require("./binance_2");
 
 inputBalance();
