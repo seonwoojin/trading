@@ -20,6 +20,7 @@ let binance = new Binance().options({
   recvWindow: 90000,
   verbose: true,
   hedgeMode: true,
+  family: 4,
 });
 
 let json1 = {
