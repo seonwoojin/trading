@@ -839,11 +839,11 @@ async function final(longFail, shortFail, ch) {
     }
   }
   try {
-    let firstBalance = await GetBalances();
-    if (isNaN(firstBalance)) {
-      console.log("UTCK 켜세요");
-      return;
-    }
+    //let firstBalance = await GetBalances();
+    // if (isNaN(firstBalance)) {
+    //   console.log("UTCK 켜세요");
+    //   return;
+    // }
     leve = 20;
     await binance.useServerTime();
     await Leverage(leve, coinName);
@@ -1181,10 +1181,10 @@ async function home(coin) {
           fails
         );
       }
-      let secondreaBlalance2 = await GetBalances();
-      if (secondreaBlalance2 > secondreaBlalance) {
-        secondreaBlalance = secondreaBlalance2;
-      }
+      // let secondreaBlalance2 = await GetBalances();
+      // if (secondreaBlalance2 > secondreaBlalance) {
+      //   secondreaBlalance = secondreaBlalance2;
+      // }
       let stopAll = await getManagerStop(client);
       while (stopAll == 100) {
         await sleep(5000);
