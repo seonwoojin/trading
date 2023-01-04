@@ -1,3 +1,3 @@
-const { home } = require("./binance_2");
+const { home } = require("./binance");
 
 home(1);
