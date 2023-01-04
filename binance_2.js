@@ -502,7 +502,7 @@ async function final(failure) {
     //   console.log("UTCK 켜세요");
     //   return;
     // }
-    leve = 20;
+    leve = 40;
     await binance.useServerTime();
     await Leverage(leve, coinName);
     await sleep(1000);
@@ -514,7 +514,7 @@ async function final(failure) {
     const enterAmt = (
       (1160 / 9000 / coinPrices) *
       leve *
-      3 *
+      2 *
       2 ** enterFailure
     ).toFixed(bbfix);
     console.log(positionDir);
