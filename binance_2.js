@@ -227,7 +227,7 @@ async function enterPosition(amt, coinName, positionDir) {
       if (size == 0 && obj.symbol != coinName) continue;
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
         if (positionDir === "LONG") {
-          limitPrice = (obj.entryPrice * 1.02).toFixed(fix);
+          limitPrice = (obj.entryPrice * 1.03).toFixed(fix);
           stopPrice = (obj.entryPrice * 0.985).toFixed(fix);
           let MarketSell = await binance.futuresMarketSell(coinName, amt, {
             positionSide: "LONG",
@@ -253,7 +253,7 @@ async function enterPosition(amt, coinName, positionDir) {
       }
       if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
         if (positionDir === "SHORT") {
-          limitPrice = (obj.entryPrice * 0.98).toFixed(fix);
+          limitPrice = (obj.entryPrice * 0.97).toFixed(fix);
           stopPrice = (obj.entryPrice * 1.015).toFixed(fix);
           let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
             positionSide: "SHORT",
@@ -512,12 +512,11 @@ async function final(failure) {
       coinPrices = await GetPrices(coinName);
     }
     const enterAmt = (
-      (1160 / 9000 / coinPrices) *
+      (1000 / 9000 / coinPrices) *
       leve *
-      2 *
+      4 *
       2 ** enterFailure
     ).toFixed(bbfix);
-    console.log(positionDir);
     let enter = await enterPosition(enterAmt, coinName, positionDir);
     if (enter === 1000) {
       await cancleOrder(coinName);
@@ -544,7 +543,7 @@ async function final(failure) {
     }
     let entryPrice = positionJson.entryPrice;
     let limitPrice =
-      positionDir === "LONG" ? entryPrice * 1.025 : entryPrice * 0.975;
+      positionDir === "LONG" ? entryPrice * 1.035 : entryPrice * 0.965;
     let stopPrice =
       positionDir === "LONG" ? entryPrice * 0.98 : entryPrice * 1.02;
     while (true) {
@@ -638,6 +637,9 @@ async function final(failure) {
       }
       if (endSwitch) {
         await cancleOrder(coinName);
+        if (allFailure > 0) {
+          fails[allFailure - 1] += 1;
+        }
         console.log("실패 :", allFailure);
         console.log("성공 :", allSuccess);
         return;
@@ -773,7 +775,7 @@ async function home(coin) {
         await sleep(5000);
         stopAll = await getManagerStop(client);
       }
-      if (allFailure >= 7) {
+      if (allFailure >= 6) {
         let stop = await getManager(client);
         while (stop == 100) {
           await sleep(5000);
