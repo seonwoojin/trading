@@ -502,6 +502,7 @@ async function final(failure) {
     // await Leverage(leve, coinName);
     // await sleep(1000);
     coinPrices = await GetPrices(coinName);
+    console.log(coinPrices);
     while (coinPrices == 100000) {
       await sleep(1000);
       coinPrices = await GetPrices(coinName);
