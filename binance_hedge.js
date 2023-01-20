@@ -811,7 +811,7 @@ async function home(coin) {
         }
       }
       await final(allFailure);
-      if (allFailure >= 8) {
+      if (allFailure >= 9) {
         return;
       }
     }
@@ -935,6 +935,56 @@ async function inputBalance() {
     await sleep(10000);
   }
 }
+
+async function main() {
+  const coinName = "ADAUSDT";
+  let entryPrice = 0.31122;
+  let amt = 6500;
+  const positionDir = "SHORT";
+  while (true) {
+    let coinPrices = await GetPrices(coinName);
+    while (coinPrices == 100000) {
+      await sleep(1000);
+      coinPrices = await GetPrices(coinName);
+    }
+    if (coinPrices >= entryPrice * 1.005) {
+      await cancleOrder(coinName);
+      await FuturesShortSell(amt, coinName);
+      await sleep(500);
+      let position_data = await binance.futuresPositionRisk(),
+        markets = Object.keys(position_data);
+      for (let market of markets) {
+        let obj = position_data[market],
+          size = Number(obj.positionAmt);
+        if (size == 0 && obj.symbol != coinName) continue;
+        if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
+          if (positionDir === "SHORT") {
+            entryPrice = obj.entryPrice * 1;
+            let limitPrice = (obj.entryPrice * 0.985).toFixed(fix);
+            if (MarketBuy.code != null) {
+              if (MarketBuy.code != -4164) {
+                console.log(MarketBuy.msg);
+                return 1000;
+              }
+            }
+            let limitBuy = await binance.futuresBuy(coinName, amt, limitPrice, {
+              positionSide: "SHORT",
+            });
+            if (limitBuy.code != null) {
+              if (limitBuy.code != -4164) {
+                console.log(limitBuy.msg);
+                return 1000;
+              }
+            }
+          }
+        }
+      }
+    }
+    await sleep(2000);
+  }
+}
+
+//main();
 
 module.exports.home = home;
 module.exports.inputBalance = inputBalance;
