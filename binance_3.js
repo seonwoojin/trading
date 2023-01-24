@@ -539,9 +539,13 @@ async function final(failure) {
     // }
     // let entryPrice = positionJson.entryPrice;
     let limitPrice =
-      positionDir === "LONG" ? coinPrices * 1.04 : coinPrices * 0.96;
+      positionDir === "LONG"
+        ? coinPrices * (1 + successRate / 100)
+        : coinPrices * (1 - successRate / 100);
     let stopPrice =
-      positionDir === "LONG" ? coinPrices * 0.98 : coinPrices * 1.02;
+      positionDir === "LONG"
+        ? coinPrices * (1 - failRate / 100)
+        : coinPrices * (1 + failRate / 100);
     while (true) {
       let coinPrice2 = await GetPrices(coinName);
       while (coinPrice2 == 100000) {
@@ -668,6 +672,8 @@ async function final(failure) {
 
 let secondreaBlalance;
 let coinName;
+let successRate;
+let failRate;
 
 let fails = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -688,60 +694,80 @@ async function home(coin) {
         num = 1;
         fix = 2;
         bbfix = 3;
+        successRate = 4;
+        failRate = 2;
         break;
       case 2:
         coinName = "XRPUSDT";
         num = 2;
         fix = 4;
         bbfix = 1;
+        successRate = 4;
+        failRate = 2;
         break;
       case 3:
         coinName = "DOGEUSDT";
         num = 3;
         fix = 5;
         bbfix = 0;
+        successRate = 5;
+        failRate = 3;
         break;
       case 4:
         coinName = "ADAUSDT";
         num = 4;
         fix = 4;
         bbfix = 0;
+        successRate = 5;
+        failRate = 3;
         break;
       case 5:
         coinName = "EOSUSDT";
         num = 5;
         fix = 3;
         bbfix = 1;
+        successRate = 5;
+        failRate = 3;
         break;
       case 6:
         coinName = "BCHUSDT";
         num = 6;
         fix = 2;
         bbfix = 3;
+        successRate = 4;
+        failRate = 2;
         break;
       case 7:
         coinName = "BNBUSDT";
         num = 7;
         fix = 2;
         bbfix = 2;
+        successRate = 5;
+        failRate = 3;
         break;
       case 8:
         coinName = "ETCUSDT";
         num = 8;
         fix = 3;
         bbfix = 2;
+        successRate = 5;
+        failRate = 3;
         break;
       case 9:
         coinName = "LINKUSDT";
         num = 9;
         fix = 3;
         bbfix = 2;
+        successRate = 4;
+        failRate = 2;
         break;
       case 10:
         coinName = "DOTUSDT";
         num = 10;
         fix = 3;
         bbfix = 1;
+        successRate = 4;
+        failRate = 2;
         break;
       case 11:
         coinName = "TRXUSDT";
