@@ -694,7 +694,7 @@ async function home(coin) {
         num = 1;
         fix = 2;
         bbfix = 3;
-        successRate = 4;
+        successRate = 3;
         failRate = 2;
         break;
       case 2:
@@ -702,7 +702,7 @@ async function home(coin) {
         num = 2;
         fix = 4;
         bbfix = 1;
-        successRate = 4;
+        successRate = 3;
         failRate = 2;
         break;
       case 3:
@@ -710,31 +710,31 @@ async function home(coin) {
         num = 3;
         fix = 5;
         bbfix = 0;
-        successRate = 5;
-        failRate = 3;
+        successRate = 3;
+        failRate = 2;
         break;
       case 4:
         coinName = "ADAUSDT";
         num = 4;
         fix = 4;
         bbfix = 0;
-        successRate = 5;
-        failRate = 3;
+        successRate = 3;
+        failRate = 2;
         break;
       case 5:
         coinName = "EOSUSDT";
         num = 5;
         fix = 3;
         bbfix = 1;
-        successRate = 5;
-        failRate = 3;
+        successRate = 3;
+        failRate = 2;
         break;
       case 6:
         coinName = "BCHUSDT";
         num = 6;
         fix = 2;
         bbfix = 3;
-        successRate = 4;
+        successRate = 3;
         failRate = 2;
         break;
       case 7:
@@ -742,23 +742,23 @@ async function home(coin) {
         num = 7;
         fix = 2;
         bbfix = 2;
-        successRate = 5;
-        failRate = 3;
+        successRate = 3;
+        failRate = 2;
         break;
       case 8:
         coinName = "ETCUSDT";
         num = 8;
         fix = 3;
         bbfix = 2;
-        successRate = 5;
-        failRate = 3;
+        successRate = 3;
+        failRate = 2;
         break;
       case 9:
         coinName = "LINKUSDT";
         num = 9;
         fix = 3;
         bbfix = 2;
-        successRate = 4;
+        successRate = 3;
         failRate = 2;
         break;
       case 10:
@@ -766,7 +766,7 @@ async function home(coin) {
         num = 10;
         fix = 3;
         bbfix = 1;
-        successRate = 4;
+        successRate = 3;
         failRate = 2;
         break;
       case 11:
