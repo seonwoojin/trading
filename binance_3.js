@@ -497,6 +497,8 @@ async function final(failure) {
   let enterFailure = failure * 1;
   let positionJson;
   try {
+    success = allFailure > 5 ? 2.5 : 3;
+    failRate = 2;
     // leve = 40;
     // await binance.useServerTime();
     // await Leverage(leve, coinName);
@@ -585,14 +587,7 @@ async function final(failure) {
         // if (plusAmt == 0 && endSwitch == false) {
         if (endSwitch == false) {
           if (stopPrice >= coinPrice2) {
-            if (
-              allFailure === 2 ||
-              allFailure === 5 ||
-              allFailure === 8 ||
-              allFailure === 11 ||
-              allFailure === 14 ||
-              allFailure === 17
-            ) {
+            if (allFailure % 2 === 1) {
               positionDir = "SHORT";
             }
             allFailure++;
@@ -637,14 +632,7 @@ async function final(failure) {
         // if (minusAmt == 0 && endSwitch == false) {
         if (endSwitch == false) {
           if (stopPrice <= coinPrice2) {
-            if (
-              allFailure === 2 ||
-              allFailure === 5 ||
-              allFailure === 8 ||
-              allFailure === 11 ||
-              allFailure === 14 ||
-              allFailure === 17
-            ) {
+            if (allFailure % 2 === 1) {
               positionDir = "LONG";
             }
             allFailure++;
@@ -694,80 +682,60 @@ async function home(coin) {
         num = 1;
         fix = 2;
         bbfix = 3;
-        successRate = 3;
-        failRate = 2;
         break;
       case 2:
         coinName = "XRPUSDT";
         num = 2;
         fix = 4;
         bbfix = 1;
-        successRate = 3;
-        failRate = 2;
         break;
       case 3:
         coinName = "DOGEUSDT";
         num = 3;
         fix = 5;
         bbfix = 0;
-        successRate = 3;
-        failRate = 2;
         break;
       case 4:
         coinName = "ADAUSDT";
         num = 4;
         fix = 4;
         bbfix = 0;
-        successRate = 3;
-        failRate = 2;
         break;
       case 5:
         coinName = "EOSUSDT";
         num = 5;
         fix = 3;
         bbfix = 1;
-        successRate = 3;
-        failRate = 2;
         break;
       case 6:
         coinName = "BCHUSDT";
         num = 6;
         fix = 2;
         bbfix = 3;
-        successRate = 3;
-        failRate = 2;
         break;
       case 7:
         coinName = "BNBUSDT";
         num = 7;
         fix = 2;
         bbfix = 2;
-        successRate = 3;
-        failRate = 2;
         break;
       case 8:
         coinName = "ETCUSDT";
         num = 8;
         fix = 3;
         bbfix = 2;
-        successRate = 3;
-        failRate = 2;
         break;
       case 9:
         coinName = "LINKUSDT";
         num = 9;
         fix = 3;
         bbfix = 2;
-        successRate = 3;
-        failRate = 2;
         break;
       case 10:
         coinName = "DOTUSDT";
         num = 10;
         fix = 3;
         bbfix = 1;
-        successRate = 3;
-        failRate = 2;
         break;
       case 11:
         coinName = "TRXUSDT";
