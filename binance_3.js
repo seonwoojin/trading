@@ -497,7 +497,7 @@ async function final(failure) {
   let enterFailure = failure * 1;
   let positionJson;
   try {
-    success = allFailure > 5 ? 2.5 : 3;
+    successRate = allFailure > 5 ? 2.5 : 3;
     failRate = 2;
     // leve = 40;
     // await binance.useServerTime();
