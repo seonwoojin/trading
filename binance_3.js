@@ -497,8 +497,8 @@ async function final(failure) {
   let enterFailure = failure * 1;
   let positionJson;
   try {
-    successRate = allFailure > 5 ? 2.5 : 3;
-    failRate = 2;
+    successRate = 0.7;
+    failRate = 0.5;
     // leve = 40;
     // await binance.useServerTime();
     // await Leverage(leve, coinName);
@@ -587,7 +587,7 @@ async function final(failure) {
         // if (plusAmt == 0 && endSwitch == false) {
         if (endSwitch == false) {
           if (stopPrice >= coinPrice2) {
-            if (allFailure % 2 === 1) {
+            if (allFailure === 3) {
               positionDir = "SHORT";
             }
             allFailure++;
@@ -632,7 +632,7 @@ async function final(failure) {
         // if (minusAmt == 0 && endSwitch == false) {
         if (endSwitch == false) {
           if (stopPrice <= coinPrice2) {
-            if (allFailure % 2 === 1) {
+            if (allFailure === 3) {
               positionDir = "LONG";
             }
             allFailure++;
@@ -822,9 +822,9 @@ async function home(coin) {
       //   }
       // }
       await final(allFailure);
-      // if (allFailure >= 8) {
-      //   return;
-      // }
+      if (allFailure >= 7) {
+        return;
+      }
     }
   } catch (error) {
     console.log(error);
