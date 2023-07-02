@@ -264,7 +264,6 @@ async function Long(coinName, bbfix, fix) {
           plusAmt = await getplusAmt(json1);
           let markPrice = parseFloat(json1.markPrice);
           if (markPrice >= successPrice) {
-            await cancleOrder(coinName);
             let MarketSell = await binance.futuresMarketSell(
               coinName,
               plusAmt,
@@ -410,7 +409,6 @@ async function Short(coinName, bbfix, fix) {
           plusAmt = await getminusAmt(json1);
           let markPrice = parseFloat(json1.markPrice);
           if (markPrice <= successPrice) {
-            await cancleOrder(coinName);
             let MarketSell = await binance.futuresMarketBuy(coinName, plusAmt, {
               positionSide: "SHORT",
               type: "STOP_MARKET",
@@ -486,7 +484,6 @@ async function LongScalpe(coinName, bbfix, fix) {
       plusAmt = await getplusAmt(json1);
       let markPrice = parseFloat(json1.markPrice);
       if (markPrice >= entryPrice * 1.01 && attempt == 0) {
-        await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
         for (let market of markets) {
@@ -505,7 +502,6 @@ async function LongScalpe(coinName, bbfix, fix) {
         attempt++;
       }
       if (markPrice >= entryPrice * 1.02 && attempt == 1) {
-        await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
         for (let market of markets) {
@@ -585,7 +581,6 @@ async function ShortScalpe(coinName, bbfix, fix) {
       plusAmt = await getminusAmt(json1);
       let markPrice = parseFloat(json1.markPrice);
       if (markPrice <= entryPrice * 0.99 && attempt == 0) {
-        await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
         for (let market of markets) {
@@ -604,7 +599,6 @@ async function ShortScalpe(coinName, bbfix, fix) {
         attempt++;
       }
       if (markPrice <= entryPrice * 0.98 && attempt == 1) {
-        await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
         for (let market of markets) {
