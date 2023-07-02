@@ -170,7 +170,7 @@ async function Long(coinName, bbfix, fix) {
     let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
       positionSide: "LONG",
     });
-    await sleep(500);
+    await sleep(1000);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
     for (let market of markets) {
@@ -281,7 +281,7 @@ async function Long(coinName, bbfix, fix) {
             await cancleOrder(coinName);
             return;
           }
-          await sleep(1000);
+          await sleep(100);
         }
       }
       if (plusAmt === 0) {
@@ -316,7 +316,7 @@ async function Short(coinName, bbfix, fix) {
     let MarketBuy = await binance.futuresMarketSell(coinName, amt, {
       positionSide: "SHORT",
     });
-    await sleep(500);
+    await sleep(1000);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
     for (let market of markets) {
@@ -423,7 +423,7 @@ async function Short(coinName, bbfix, fix) {
             await cancleOrder(coinName);
             return;
           }
-          await sleep(1000);
+          await sleep(100);
         }
         return;
       }
@@ -456,7 +456,7 @@ async function LongScalpe(coinName, bbfix, fix) {
     let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
       positionSide: "LONG",
     });
-    await sleep(500);
+    await sleep(1000);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
     for (let market of markets) {
@@ -527,6 +527,7 @@ async function LongScalpe(coinName, bbfix, fix) {
         await cancleOrder(coinName);
         return;
       }
+      await sleep(100);
     }
   } catch (error) {
     console.log(error);
@@ -554,7 +555,7 @@ async function ShortScalpe(coinName, bbfix, fix) {
     let MarketBuy = await binance.futuresMarketSell(coinName, amt, {
       positionSide: "SHORT",
     });
-    await sleep(500);
+    await sleep(1000);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
     for (let market of markets) {
@@ -625,6 +626,7 @@ async function ShortScalpe(coinName, bbfix, fix) {
         await cancleOrder(coinName);
         return;
       }
+      await sleep(100);
     }
   } catch (error) {
     console.log(error);
