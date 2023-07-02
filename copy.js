@@ -164,7 +164,7 @@ async function Long(coinName, bbfix, fix) {
       await sleep(1000);
       coinPrices = await GetPrices(coinName);
     }
-    const balance = Math.floor(await GetBalances());
+    const balance = Math.floor(await GetBalances()) * 0.95;
     const amt = ((balance / coinPrices) * 5).toFixed(bbfix);
     let posAmt = amt;
     let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
@@ -310,7 +310,7 @@ async function Short(coinName, bbfix, fix) {
       await sleep(1000);
       coinPrices = await GetPrices(coinName);
     }
-    const balance = Math.floor(await GetBalances());
+    const balance = Math.floor(await GetBalances()) * 0.95;
     const amt = ((balance / coinPrices) * 5).toFixed(bbfix);
     let posAmt = amt;
     let MarketBuy = await binance.futuresMarketSell(coinName, amt, {
@@ -451,7 +451,7 @@ async function LongScalpe(coinName, bbfix, fix) {
       await sleep(1000);
       coinPrices = await GetPrices(coinName);
     }
-    const balance = Math.floor(await GetBalances());
+    const balance = Math.floor(await GetBalances()) * 0.95;
     const amt = ((balance / coinPrices) * 5).toFixed(bbfix);
     let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
       positionSide: "LONG",
@@ -547,12 +547,14 @@ async function ShortScalpe(coinName, bbfix, fix) {
       await sleep(1000);
       coinPrices = await GetPrices(coinName);
     }
-    const balance = Math.floor(await GetBalances());
+    const balance = Math.floor(await GetBalances()) * 0.95;
     const amt = ((balance / coinPrices) * 5).toFixed(bbfix);
+    console.log(amt);
     let posAmt = amt;
     let MarketBuy = await binance.futuresMarketSell(coinName, amt, {
       positionSide: "SHORT",
     });
+    console.log(MarketBuy);
     await sleep(500);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
