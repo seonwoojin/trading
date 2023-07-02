@@ -485,7 +485,7 @@ async function LongScalpe(coinName, bbfix, fix) {
       }
       plusAmt = await getplusAmt(json1);
       let markPrice = parseFloat(json1.markPrice);
-      if (markPrice >= entryPrice * 1.1 && attempt == 0) {
+      if (markPrice >= entryPrice * 1.01 && attempt == 0) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
@@ -504,7 +504,7 @@ async function LongScalpe(coinName, bbfix, fix) {
         });
         attempt++;
       }
-      if (markPrice >= entryPrice * 1.2 && attempt == 1) {
+      if (markPrice >= entryPrice * 1.02 && attempt == 1) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
@@ -554,7 +554,6 @@ async function ShortScalpe(coinName, bbfix, fix) {
     let MarketBuy = await binance.futuresMarketSell(coinName, amt, {
       positionSide: "SHORT",
     });
-    console.log(MarketBuy);
     await sleep(500);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
@@ -584,7 +583,7 @@ async function ShortScalpe(coinName, bbfix, fix) {
       }
       plusAmt = await getminusAmt(json1);
       let markPrice = parseFloat(json1.markPrice);
-      if (markPrice <= entryPrice * 0.9 && attempt == 0) {
+      if (markPrice <= entryPrice * 0.99 && attempt == 0) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
