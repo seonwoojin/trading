@@ -178,8 +178,9 @@ async function Long(coinName, bbfix, fix) {
         size = Number(obj.positionAmt);
       if (size == 0 && obj.symbol != coinName) continue;
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-        limitPrice = (obj.entryPrice * 1.01).toFixed(fix);
+        limitPrice = (obj.entryPrice * 1.02).toFixed(fix);
         stopPrice = (obj.entryPrice * 0.99).toFixed(fix);
+        entryPrice = obj.entryPrice * 1;
       }
     }
     let MarketSell = await binance.futuresMarketSell(coinName, amt, {
@@ -200,7 +201,15 @@ async function Long(coinName, bbfix, fix) {
       }
       plusAmt = await getplusAmt(json1);
       let markPrice = parseFloat(json1.markPrice);
-      if (plusAmt >= posAmt * 1.9 && attempt == 0) {
+      if (markPrice >= entryPrice * 1.01 && attempt == 0) {
+        let MarketSell = await binance.futuresMarketSell(coinName, plusAmt, {
+          positionSide: "LONG",
+          type: "STOP_MARKET",
+          stopPrice: (entryPrice * 1.002).toFixed(fix),
+        });
+        attempt++;
+      }
+      if (plusAmt >= posAmt * 1.9 && attempt == 1) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
@@ -209,7 +218,7 @@ async function Long(coinName, bbfix, fix) {
             size = Number(obj.positionAmt);
           if (size == 0 && obj.symbol != coinName) continue;
           if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-            limitPrice = (obj.entryPrice * 1.01).toFixed(fix);
+            limitPrice = (obj.entryPrice * 1.02).toFixed(fix);
             stopPrice = (obj.entryPrice * 1.002).toFixed(fix);
           }
         }
@@ -226,7 +235,7 @@ async function Long(coinName, bbfix, fix) {
         });
         attempt++;
       }
-      if (plusAmt >= posAmt * 1.9 && attempt == 1) {
+      if (plusAmt >= posAmt * 1.9 && attempt == 2) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
@@ -323,8 +332,9 @@ async function Short(coinName, bbfix, fix) {
         size = Number(obj.positionAmt);
       if (size == 0 && obj.symbol != coinName) continue;
       if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
-        limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
+        limitPrice = (obj.entryPrice * 0.98).toFixed(fix);
         stopPrice = (obj.entryPrice * 1.01).toFixed(fix);
+        entryPrice = obj.entryPrice * 1;
       }
     }
     let MarketSell = await binance.futuresMarketBuy(coinName, amt, {
@@ -345,7 +355,15 @@ async function Short(coinName, bbfix, fix) {
       }
       plusAmt = await getminusAmt(json1);
       let markPrice = parseFloat(json1.markPrice);
-      if (plusAmt >= posAmt * 1.9 && attempt == 0) {
+      if (markPrice <= entryPrice * 0.99 && attempt == 0) {
+        let MarketSell = await binance.futuresMarketBuy(coinName, plusAmt, {
+          positionSide: "SHORT",
+          type: "STOP_MARKET",
+          stopPrice: (entryPrice * 0.998).toFixed(fix),
+        });
+        attempt++;
+      }
+      if (plusAmt >= posAmt * 1.9 && attempt == 1) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
@@ -354,7 +372,7 @@ async function Short(coinName, bbfix, fix) {
             size = Number(obj.positionAmt);
           if (size == 0 && obj.symbol != coinName) continue;
           if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
-            limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
+            limitPrice = (obj.entryPrice * 0.98).toFixed(fix);
             stopPrice = (obj.entryPrice * 0.998).toFixed(fix);
           }
         }
@@ -371,7 +389,7 @@ async function Short(coinName, bbfix, fix) {
         });
         attempt++;
       }
-      if (plusAmt >= posAmt * 1.9 && attempt == 1) {
+      if (plusAmt >= posAmt * 1.9 && attempt == 2) {
         await cancleOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
