@@ -279,7 +279,7 @@ async function Long(coinName, bbfix, fix) {
               {
                 positionSide: "LONG",
                 type: "STOP_MARKET",
-                stopPrice: entryPrice * (1 + per - 0.005),
+                stopPrice: entryPrice * (1 + per - 0.01),
               }
             );
             successPrice = entryPrice * (1 + per + 0.005);
@@ -430,7 +430,7 @@ async function Short(coinName, bbfix, fix) {
             let MarketSell = await binance.futuresMarketBuy(coinName, plusAmt, {
               positionSide: "SHORT",
               type: "STOP_MARKET",
-              stopPrice: entryPrice * (1 - per + 0.005),
+              stopPrice: entryPrice * (1 - per + 0.01),
             });
             successPrice = entryPrice * (1 - per - 0.005);
             per = per + 0.005;
@@ -472,6 +472,7 @@ async function LongScalpe(coinName, bbfix, fix) {
     let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
       positionSide: "LONG",
     });
+    console.log(MarketBuy);
     await sleep(1000);
     let position_data = await binance.futuresPositionRisk(),
       markets = Object.keys(position_data);
