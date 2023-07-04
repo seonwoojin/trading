@@ -294,6 +294,7 @@ async function Long(coinName, bbfix, fix) {
       }
       if (plusAmt === 0) {
         await cancleOrder(coinName);
+        inputEnd(true);
         return;
       }
     }
@@ -437,6 +438,7 @@ async function Short(coinName, bbfix, fix) {
           }
           if (plusAmt === 0) {
             await cancleOrder(coinName);
+            inputEnd(true);
             return;
           }
           await sleep(100);
@@ -540,6 +542,7 @@ async function LongScalpe(coinName, bbfix, fix) {
       }
       if (plusAmt === 0) {
         await cancleOrder(coinName);
+        inputEnd(true);
         return;
       }
       await sleep(100);
@@ -637,6 +640,82 @@ async function ShortScalpe(coinName, bbfix, fix) {
       }
       if (plusAmt === 0) {
         await cancleOrder(coinName);
+        inputEnd(true);
+        return;
+      }
+      await sleep(100);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function bug(coinName, bbfix, fix) {
+  try {
+    await binance.useServerTime();
+    await Leverage(10, coinName);
+    await sleep(1000);
+    coinPrices = await GetPrices(coinName);
+    while (coinPrices == 100000) {
+      await sleep(1000);
+      coinPrices = await GetPrices(coinName);
+    }
+    const balance = Math.floor(await GetBalances()) * 0.95;
+    const amt = ((balance / coinPrices) * 5).toFixed(bbfix);
+    let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
+      positionSide: "LONG",
+    });
+    let MarketSell = await binance.futuresMarketSell(coinName, amt, {
+      positionSide: "SHORT",
+    });
+    await sleep(1000);
+    let position_data = await binance.futuresPositionRisk(),
+      markets = Object.keys(position_data);
+    for (let market of markets) {
+      let obj = position_data[market],
+        size = Number(obj.positionAmt);
+      if (size == 0 && obj.symbol != coinName) continue;
+      if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
+        limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
+        stopPrice = (obj.entryPrice * 1.005).toFixed(fix);
+        let MarketSell = await binance.futuresMarketBuy(coinName, amt, {
+          positionSide: "SHORT",
+          type: "STOP_MARKET",
+          stopPrice: stopPrice,
+        });
+        let limitSell = await binance.futuresBuy(coinName, amt, limitPrice, {
+          positionSide: "SHORT",
+        });
+      }
+      if (obj.positionSide == "LONG" && obj.symbol == coinName) {
+        limitPrice = (obj.entryPrice * 1.01).toFixed(fix);
+        stopPrice = (obj.entryPrice * 0.995).toFixed(fix);
+        let MarketSell = await binance.futuresMarketSell(coinName, amt, {
+          positionSide: "LONG",
+          type: "STOP_MARKET",
+          stopPrice: stopPrice,
+        });
+        let limitSell = await binance.futuresSell(coinName, amt, limitPrice, {
+          positionSide: "LONG",
+        });
+      }
+    }
+    while (true) {
+      json1 = await minusBalance(coinName);
+      while (json1.errornum == 1) {
+        await sleep(1000);
+        json1 = await minusBalance(coinName);
+      }
+      let plusAmt = await getminusAmt(json1);
+      json2 = await minusBalance(coinName);
+      while (json2.errornum == 1) {
+        await sleep(1000);
+        json2 = await minusBalance(coinName);
+      }
+      let minusAmt = await getminusAmt(json2);
+      if (plusAmt === 0 && minusAmt === 0) {
+        await cancleOrder(coinName);
+        inputEnd(true);
         return;
       }
       await sleep(100);
@@ -683,6 +762,27 @@ async function inputManager(client, coinName, bbfix, fix) {
   }
 }
 
+async function inputEnd(bool) {
+  try {
+    const sheets = google.sheets({ version: "v4", auth: client });
+    let memberArray = new Array();
+    memberArray[0] = new Array(bool ? "End" : "Progress");
+    let inp = "manager!E2";
+    const request = {
+      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
+      range: inp, // 범위를 지정해 주지 않으면 A1 행부터 데이터를 덮어 씌운다.
+      valueInputOption: "USER_ENTERED",
+      resource: { values: memberArray },
+    };
+    const response = await sheets.spreadsheets.values.update(request);
+
+    return 1;
+  } catch (error) {
+    console.log(error);
+    return 100;
+  }
+}
+
 async function main() {
   while (true) {
     let array = await getManager(client);
@@ -695,6 +795,7 @@ async function main() {
     const priceFix = array[2] * 1;
     const position = array[3] * 1;
     if (position !== 0) {
+      inputEnd(false);
       let input = inputManager(client, coin, amountFix, priceFix);
       while (input === 100) {
         await sleep(1000);
@@ -708,6 +809,8 @@ async function main() {
         await LongScalpe(coin, amountFix, priceFix);
       } else if (position === 4) {
         await ShortScalpe(coin, amountFix, priceFix);
+      } else if (position === 5) {
+        await bug(coin, amountFix, priceFix);
       }
     }
     await sleep(1000);
