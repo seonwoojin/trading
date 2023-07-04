@@ -701,12 +701,12 @@ async function bug(coinName, bbfix, fix) {
       }
     }
     while (true) {
-      json1 = await minusBalance(coinName);
+      json1 = await plusBalance(coinName);
       while (json1.errornum == 1) {
         await sleep(1000);
-        json1 = await minusBalance(coinName);
+        json1 = await plusBalance(coinName);
       }
-      let plusAmt = await getminusAmt(json1);
+      let plusAmt = await getplusAmt(json1);
       json2 = await minusBalance(coinName);
       while (json2.errornum == 1) {
         await sleep(1000);
