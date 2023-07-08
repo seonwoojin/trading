@@ -796,22 +796,24 @@ async function main() {
     const priceFix = array[2] * 1;
     const position = array[3] * 1;
     if (position !== 0) {
-      if (position !== 6) inputEnd(false);
-      let input = inputManager(client, coin, amountFix, priceFix);
-      while (input === 100) {
-        await sleep(1000);
-        input = inputManager(client, coin, amountFix, priceFix);
-      }
-      if (position === 1) {
-        await Long(coin, amountFix, priceFix);
-      } else if (position === 2) {
-        await Short(coin, amountFix, priceFix);
-      } else if (position === 3) {
-        await LongScalpe(coin, amountFix, priceFix);
-      } else if (position === 4) {
-        await ShortScalpe(coin, amountFix, priceFix);
-      } else if (position === 5) {
-        await bug(coin, amountFix, priceFix);
+      if (position !== 6) {
+        inputEnd(false);
+        let input = inputManager(client, coin, amountFix, priceFix);
+        while (input === 100) {
+          await sleep(1000);
+          input = inputManager(client, coin, amountFix, priceFix);
+        }
+        if (position === 1) {
+          await Long(coin, amountFix, priceFix);
+        } else if (position === 2) {
+          await Short(coin, amountFix, priceFix);
+        } else if (position === 3) {
+          await LongScalpe(coin, amountFix, priceFix);
+        } else if (position === 4) {
+          await ShortScalpe(coin, amountFix, priceFix);
+        } else if (position === 5) {
+          await bug(coin, amountFix, priceFix);
+        }
       }
     }
     await sleep(1000);
