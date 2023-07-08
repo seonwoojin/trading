@@ -447,6 +447,7 @@ async function Short(coinName, bbfix, fix) {
       }
       if (plusAmt === 0) {
         await cancleOrder(coinName);
+        inputEnd(true);
         return;
       }
     }
@@ -795,7 +796,7 @@ async function main() {
     const priceFix = array[2] * 1;
     const position = array[3] * 1;
     if (position !== 0) {
-      inputEnd(false);
+      if (position !== 6) inputEnd(false);
       let input = inputManager(client, coin, amountFix, priceFix);
       while (input === 100) {
         await sleep(1000);
