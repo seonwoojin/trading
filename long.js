@@ -178,7 +178,7 @@ async function Long(coinName, bbfix, fix) {
         size = Number(obj.positionAmt);
       if (size == 0 && obj.symbol != coinName) continue;
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-        limitPrice = (obj.entryPrice * 1.015).toFixed(fix);
+        limitPrice = (obj.entryPrice * 1.012).toFixed(fix);
         stopPrice = (obj.entryPrice * 0.99).toFixed(fix);
         entryPrice = obj.entryPrice * 1;
       }
@@ -218,7 +218,7 @@ async function Long(coinName, bbfix, fix) {
             size = Number(obj.positionAmt);
           if (size == 0 && obj.symbol != coinName) continue;
           if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-            limitPrice = (obj.entryPrice * 1.015).toFixed(fix);
+            limitPrice = (obj.entryPrice * 1.012).toFixed(fix);
             stopPrice = (obj.entryPrice * 1.002).toFixed(fix);
           }
         }
