@@ -374,12 +374,10 @@ async function main() {
     if (position !== 0) {
       if (position === 6) {
         await inputEnd(false);
+        setTimeout(() => {
+          let input = inputManager(client, coin, amountFix, priceFix);
+        }, [10000]);
         await Long(coin, amountFix, priceFix);
-        let input = inputManager(client, coin, amountFix, priceFix);
-        while (input === 100) {
-          await sleep(1000);
-          input = inputManager(client, coin, amountFix, priceFix);
-        }
       }
     }
     await sleep(3000);
