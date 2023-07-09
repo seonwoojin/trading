@@ -939,9 +939,10 @@ async function main() {
         } else if (position === 4) {
           await ShortScalpe(coin, amountFix, priceFix);
         } else if (position === 5) {
-          await bug("BTCUSDT", 3, 1);
+          await bug(coin, amountFix, priceFix);
         }
       } else if (position === 6) {
+        await bug("BTCUSDT", 3, 1);
       }
     }
     await sleep(1000);
