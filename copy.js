@@ -729,7 +729,7 @@ async function bug(coinName, bbfix, fix) {
 async function bugTwo(coinName, bbfix, fix) {
   try {
     await binance.useServerTime();
-    await Leverage(10, coinName);
+    await Leverage(20, coinName);
     await sleep(1000);
     let change = false;
     coinPrices = await GetPrices(coinName);
@@ -942,7 +942,7 @@ async function main() {
           await bug(coin, amountFix, priceFix);
         }
       } else if (position === 6) {
-        await bug("BTCUSDT", 3, 1);
+        await bugTwo("BTCUSDT", 3, 1);
       }
     }
     await sleep(1000);
