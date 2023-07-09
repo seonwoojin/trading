@@ -729,7 +729,7 @@ async function bug(coinName, bbfix, fix) {
 async function bugTwo(coinName, bbfix, fix) {
   try {
     await binance.useServerTime();
-    await Leverage(20, coinName);
+    await Leverage(40, coinName);
     await sleep(1000);
     let change = false;
     coinPrices = await GetPrices(coinName);

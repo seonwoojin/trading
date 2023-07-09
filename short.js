@@ -157,7 +157,7 @@ async function Short(coinName, bbfix, fix) {
     let attempt = 0;
     let per = 0.03;
     await binance.useServerTime();
-    await Leverage(20, coinName);
+    await Leverage(40, coinName);
     await sleep(1000);
     coinPrices = await GetPrices(coinName);
     while (coinPrices == 100000) {
