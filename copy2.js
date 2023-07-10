@@ -1211,7 +1211,7 @@ async function main() {
       } else if (position === 5) {
         await bug(coin, amountFix, priceFix);
       } else if (position === 6) {
-        await bugTwo("ETHUSDT", 3, 2);
+        await bugTwo("BTCUSDT", 3, 1);
       }
     }
     await sleep(2500);

@@ -667,23 +667,21 @@ async function ShortScalpe(coinName, bbfix, fix) {
   }
 }
 
-async function bug(coinName, bbfix, fix) {
-  try {
-    await binance.useServerTime();
-    await Leverage(10, coinName);
+async function scalpe(coinName, bbfix, fix, dir) {
+  await binance.useServerTime();
+  await Leverage(20, coinName);
+  await sleep(1000);
+  coinPrices = await GetPrices(coinName);
+  while (coinPrices == 100000) {
     await sleep(1000);
     coinPrices = await GetPrices(coinName);
-    while (coinPrices == 100000) {
-      await sleep(1000);
-      coinPrices = await GetPrices(coinName);
-    }
-    const balance = Math.floor(await GetBalances()) * 0.95;
-    const amt = ((balance / coinPrices) * 5).toFixed(bbfix);
+  }
+  const limit = 0.0015;
+  const balance = Math.floor(await GetBalances()) * 0.95;
+  const amt = ((balance / coinPrices) * 3).toFixed(bbfix);
+  if (dir === 1) {
     let MarketBuy = await binance.futuresMarketBuy(coinName, amt, {
       positionSide: "LONG",
-    });
-    let MarketSell = await binance.futuresMarketSell(coinName, amt, {
-      positionSide: "SHORT",
     });
     await sleep(1000);
     let position_data = await binance.futuresPositionRisk(),
@@ -692,21 +690,9 @@ async function bug(coinName, bbfix, fix) {
       let obj = position_data[market],
         size = Number(obj.positionAmt);
       if (size == 0 && obj.symbol != coinName) continue;
-      if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
-        limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
-        stopPrice = (obj.entryPrice * 1.005).toFixed(fix);
-        let MarketSell = await binance.futuresMarketBuy(coinName, amt, {
-          positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: stopPrice,
-        });
-        let limitSell = await binance.futuresBuy(coinName, amt, limitPrice, {
-          positionSide: "SHORT",
-        });
-      }
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-        limitPrice = (obj.entryPrice * 1.01).toFixed(fix);
-        stopPrice = (obj.entryPrice * 0.995).toFixed(fix);
+        let limitPrice = (obj.entryPrice * (1 + limit)).toFixed(fix);
+        let stopPrice = (obj.entryPrice * 0.99).toFixed(fix);
         let MarketSell = await binance.futuresMarketSell(coinName, amt, {
           positionSide: "LONG",
           type: "STOP_MARKET",
@@ -717,62 +703,8 @@ async function bug(coinName, bbfix, fix) {
         });
       }
     }
-    while (true) {
-      json1 = await plusBalance(coinName);
-      while (json1.errornum == 1) {
-        await sleep(1000);
-        json1 = await plusBalance(coinName);
-      }
-      let plusAmt = await getplusAmt(json1);
-      json2 = await minusBalance(coinName);
-      while (json2.errornum == 1) {
-        await sleep(1000);
-        json2 = await minusBalance(coinName);
-      }
-      let minusAmt = await getminusAmt(json2);
-      if (plusAmt === 0 && minusAmt === 0) {
-        await cancelOrder(coinName);
-        inputEnd(true);
-        return;
-      }
-      await sleep(100);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function bugTwo(coinName, bbfix, fix) {
-  try {
-    let longStopPrice;
-    let shortStopPrice;
-    let longLimitPrice;
-    let shortLimitPrice;
-    let successPrice;
-    let longEntryPrice;
-    let shortEntryPrice;
-    let longOrderId;
-    let shortOrderId;
-    let attempt = 0;
-    let per = 0.03;
-    await binance.useServerTime();
-    await Leverage(40, coinName);
-    await sleep(1000);
-    let change = false;
-    coinPrices = await GetPrices(coinName);
-    while (coinPrices == 100000) {
-      await sleep(1000);
-      coinPrices = await GetPrices(coinName);
-    }
-    const balance = Math.floor(await GetBalances()) * 0.95;
-    const hedgeAmt = ((balance / coinPrices) * 5).toFixed(bbfix);
-    const amt = (((balance / coinPrices) * 5) / 2).toFixed(bbfix);
-    const allAmt = (hedgeAmt * 1 + amt * 1).toFixed(bbfix);
-    let MarketBuy = await binance.futuresMarketBuy(coinName, allAmt, {
-      positionSide: "LONG",
-    });
-    let posAmt = amt;
-    let MarketSell = await binance.futuresMarketSell(coinName, allAmt, {
+  } else if (dir === 2) {
+    let MarketBuy = await binance.futuresMarketSell(coinName, amt, {
       positionSide: "SHORT",
     });
     await sleep(1000);
@@ -783,357 +715,19 @@ async function bugTwo(coinName, bbfix, fix) {
         size = Number(obj.positionAmt);
       if (size == 0 && obj.symbol != coinName) continue;
       if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
-        shortLimitPrice = (obj.entryPrice * 0.988).toFixed(fix);
-        shortStopPrice = (obj.entryPrice * 1.01).toFixed(fix);
-        shortEntryPrice = obj.entryPrice * 1;
-        let limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
-        let stopPrice = (obj.entryPrice * 1.02).toFixed(fix);
-        let MarketSell = await binance.futuresMarketBuy(coinName, hedgeAmt, {
+        let limitPrice = (obj.entryPrice * (1 - limit)).toFixed(fix);
+        let stopPrice = (obj.entryPrice * 1.01).toFixed(fix);
+        let MarketSell = await binance.futuresMarketBuy(coinName, amt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
           stopPrice: stopPrice,
         });
-        let limitSell = await binance.futuresBuy(
-          coinName,
-          hedgeAmt,
-          limitPrice,
-          {
-            positionSide: "SHORT",
-          }
-        );
-        shortOrderId = new BigNumber(limitSell.orderId);
-        let MarketSell2 = await binance.futuresMarketBuy(coinName, amt, {
+        let limitSell = await binance.futuresBuy(coinName, amt, limitPrice, {
           positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: shortStopPrice,
-        });
-        let limitSell2 = await binance.futuresMarketSell(coinName, amt, {
-          positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: shortLimitPrice,
-        });
-      }
-      if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-        longLimitPrice = (obj.entryPrice * 1.012).toFixed(fix);
-        longStopPrice = (obj.entryPrice * 0.99).toFixed(fix);
-        longEntryPrice = obj.entryPrice * 1;
-        let limitPrice = (obj.entryPrice * 1.01).toFixed(fix);
-        let stopPrice = (obj.entryPrice * 0.98).toFixed(fix);
-        let MarketSell = await binance.futuresMarketSell(coinName, hedgeAmt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: stopPrice,
-        });
-        let limitSell = await binance.futuresSell(
-          coinName,
-          hedgeAmt,
-          limitPrice,
-          {
-            positionSide: "LONG",
-          }
-        );
-        longOrderId = new BigNumber(limitSell.orderId);
-        let MarketSell2 = await binance.futuresMarketSell(coinName, amt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: longStopPrice,
-        });
-        let limitBuy = await binance.futuresMarketBuy(coinName, amt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: longLimitPrice,
         });
       }
     }
-    while (true) {
-      json1 = await plusBalance(coinName);
-      while (json1.errornum == 1) {
-        await sleep(1000);
-        json1 = await plusBalance(coinName);
-      }
-      let plusAmt = await getplusAmt(json1);
-      json2 = await minusBalance(coinName);
-      while (json2.errornum == 1) {
-        await sleep(1000);
-        json2 = await minusBalance(coinName);
-      }
-      let minusAmt = await getminusAmt(json2);
-      if (plusAmt === amt * 1 && minusAmt === hedgeAmt * 1 && !change) {
-        let limitPrice = (shortEntryPrice * 0.999).toFixed(fix);
-        await binance.futuresCancel(coinName, {
-          orderId: shortOrderId.toString(),
-        });
-        await sleep(3000);
-        let limitSell = await binance.futuresBuy(
-          coinName,
-          hedgeAmt,
-          limitPrice,
-          {
-            positionSide: "SHORT",
-          }
-        );
-        change = true;
-      }
-      if (plusAmt === hedgeAmt * 1 && minusAmt === amt * 1 && !change) {
-        limitPrice = (longEntryPrice * 1.001).toFixed(fix);
-        await binance.futuresCancel(coinName, {
-          orderId: longOrderId.toString(),
-        });
-        await sleep(3000);
-        let limitSell = await binance.futuresSell(coinName, amt, limitPrice, {
-          positionSide: "LONG",
-        });
-        change = true;
-      }
-
-      if (markPrice >= longEntryPrice * 1.01 && change && attempt == 0) {
-        let MarketSell = await binance.futuresMarketSell(coinName, plusAmt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: (longEntryPrice * 1.002).toFixed(fix),
-        });
-        attempt++;
-      }
-      if (plusAmt >= posAmt * 1.9 && attempt == 1) {
-        let position_data = await binance.futuresPositionRisk(),
-          markets = Object.keys(position_data);
-        for (let market of markets) {
-          let obj = position_data[market],
-            size = Number(obj.positionAmt);
-          if (size == 0 && obj.symbol != coinName) continue;
-          if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-            longLimitPrice = (obj.entryPrice * 1.012).toFixed(fix);
-            longStopPrice = (obj.entryPrice * 1.002).toFixed(fix);
-            let limitBuy = await binance.futuresMarketBuy(coinName, plusAmt, {
-              positionSide: "LONG",
-              type: "STOP_MARKET",
-              stopPrice: longLimitPrice,
-            });
-            posAmt = plusAmt;
-            let MarketSell = await binance.futuresMarketSell(
-              coinName,
-              plusAmt,
-              {
-                positionSide: "LONG",
-                type: "STOP_MARKET",
-                stopPrice: longStopPrice,
-              }
-            );
-          }
-        }
-        attempt++;
-      }
-      if (plusAmt >= posAmt * 1.9 && attempt == 2) {
-        let position_data = await binance.futuresPositionRisk(),
-          markets = Object.keys(position_data);
-        for (let market of markets) {
-          let obj = position_data[market],
-            size = Number(obj.positionAmt);
-          if (size == 0 && obj.symbol != coinName) continue;
-          if (obj.positionSide == "LONG" && obj.symbol == coinName) {
-            let limitPrice = (obj.entryPrice * 1.05).toFixed(fix);
-            let stopPrice = (obj.entryPrice * 1.002).toFixed(fix);
-            successPrice = obj.entryPrice * (1 + per);
-            longEntryPrice = obj.entryPrice * 1;
-            let limitSell = await binance.futuresSell(
-              coinName,
-              plusAmt,
-              limitPrice,
-              {
-                positionSide: "LONG",
-              }
-            );
-            let MarketSell = await binance.futuresMarketSell(
-              coinName,
-              plusAmt,
-              {
-                positionSide: "LONG",
-                type: "STOP_MARKET",
-                stopPrice: stopPrice,
-              }
-            );
-          }
-        }
-        attempt++;
-        while (true) {
-          json1 = await plusBalance(coinName);
-          while (json1.errornum == 1) {
-            await sleep(1000);
-            json1 = await plusBalance(coinName);
-          }
-          plusAmt = await getplusAmt(json1);
-          let markPrice = parseFloat(json1.markPrice);
-          if (markPrice >= successPrice) {
-            let MarketSell = await binance.futuresMarketSell(
-              coinName,
-              plusAmt,
-              {
-                positionSide: "LONG",
-                type: "STOP_MARKET",
-                stopPrice: longEntryPrice * (1 + per - 0.01),
-              }
-            );
-            successPrice = longEntryPrice * (1 + per + 0.005);
-            per = per + 0.005;
-          }
-          if (plusAmt === 0) {
-            await cancelOrder(coinName);
-            inputEnd(true);
-            return;
-          }
-          await sleep(250);
-        }
-      }
-
-      if (markPrice <= entryPrice * 0.99 && change && attempt == 0) {
-        let MarketSell = await binance.futuresMarketBuy(coinName, minusAmt, {
-          positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: (shortEntryPrice * 0.998).toFixed(fix),
-        });
-        attempt++;
-      }
-      if (minusAmt >= posAmt * 1.9 && attempt == 1) {
-        let position_data = await binance.futuresPositionRisk(),
-          markets = Object.keys(position_data);
-        for (let market of markets) {
-          let obj = position_data[market],
-            size = Number(obj.positionAmt);
-          if (size == 0 && obj.symbol != coinName) continue;
-          if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
-            shortLimitPrice = (obj.entryPrice * 0.988).toFixed(fix);
-            shortStopPrice = (obj.entryPrice * 0.998).toFixed(fix);
-            let limitSell = await binance.futuresMarketSell(
-              coinName,
-              minusAmt,
-              {
-                positionSide: "SHORT",
-                type: "STOP_MARKET",
-                stopPrice: shortLimitPrice,
-              }
-            );
-            posAmt = minusAmt;
-            let MarketSell = await binance.futuresMarketBuy(
-              coinName,
-              minusAmt,
-              {
-                positionSide: "SHORT",
-                type: "STOP_MARKET",
-                stopPrice: shortStopPrice,
-              }
-            );
-          }
-        }
-        attempt++;
-      }
-      if (minusAmt >= posAmt * 1.9 && attempt == 2) {
-        let position_data = await binance.futuresPositionRisk(),
-          markets = Object.keys(position_data);
-        for (let market of markets) {
-          let obj = position_data[market],
-            size = Number(obj.positionAmt);
-          if (size == 0 && obj.symbol != coinName) continue;
-          if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
-            let limitPrice = (obj.entryPrice * 0.95).toFixed(fix);
-            let stopPrice = (obj.entryPrice * 0.998).toFixed(fix);
-            successPrice = obj.entryPrice * (1 - per);
-            shortEntryPrice = obj.entryPrice * 1;
-            let limitSell = await binance.futuresBuy(
-              coinName,
-              minusAmt,
-              limitPrice,
-              {
-                positionSide: "SHORT",
-              }
-            );
-            let MarketSell = await binance.futuresMarketBuy(
-              coinName,
-              minusAmt,
-              {
-                positionSide: "SHORT",
-                type: "STOP_MARKET",
-                stopPrice: stopPrice,
-              }
-            );
-          }
-        }
-        attempt++;
-        while (true) {
-          json2 = await minusBalance(coinName);
-          while (json2.errornum == 1) {
-            await sleep(1000);
-            json2 = await minusBalance(coinName);
-          }
-          minusAmt = await getminusAmt(json2);
-          let markPrice = parseFloat(json2.markPrice);
-          if (markPrice <= successPrice) {
-            let MarketSell = await binance.futuresMarketBuy(
-              coinName,
-              minusAmt,
-              {
-                positionSide: "SHORT",
-                type: "STOP_MARKET",
-                stopPrice: entryPrice * (1 - per + 0.01),
-              }
-            );
-            successPrice = entryPrice * (1 - per - 0.005);
-            per = per + 0.005;
-          }
-          if (minusAmt === 0) {
-            await cancelOrder(coinName);
-            inputEnd(true);
-            return;
-          }
-          await sleep(250);
-        }
-      }
-
-      if (plusAmt === 0 && minusAmt === 0 && change) {
-        await cancelOrder(coinName);
-        inputEnd(true);
-        return;
-      }
-      await sleep(250);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getManager(client) {
-  try {
-    const sheets = google.sheets({ version: "v4", auth: client });
-    const request = {
-      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
-
-      range: "manager!A2:D2",
-    };
-
-    const response = (await sheets.spreadsheets.values.get(request)).data;
-    return response.values[0];
-  } catch (error) {
-    console.log(error);
-    return ["100"];
-  }
-}
-
-async function inputManager(client, coinName, bbfix, fix) {
-  try {
-    const sheets = google.sheets({ version: "v4", auth: client });
-    let memberArray = new Array();
-    memberArray[0] = new Array(coinName, bbfix.toString(), fix.toString(), "0");
-    let inp = "manager!A2";
-    const request = {
-      spreadsheetId: "1i97pOdBOsEhv9vKtpluXW-fs6PbLCectRfB_UtW5RE4",
-      range: inp, // 범위를 지정해 주지 않으면 A1 행부터 데이터를 덮어 씌운다.
-      valueInputOption: "USER_ENTERED",
-      resource: { values: memberArray },
-    };
-    const response = await sheets.spreadsheets.values.update(request);
-    return 1;
-  } catch (error) {
-    console.log(error);
-    return 100;
+    return;
   }
 }
 
@@ -1158,64 +752,4 @@ async function inputEnd(bool) {
   }
 }
 
-async function main() {
-  while (true) {
-    let array = await getManager(client);
-    while (array[0] * 1 == 100) {
-      await sleep(1000);
-      array = await getManager(client);
-    }
-    const coin = array[0];
-    const amountFix = array[1] * 1;
-    const priceFix = array[2] * 1;
-    const position = array[3] * 1;
-    // if (position !== 0) {
-    //   if (position !== 6) {
-    //     inputEnd(false);
-    //     let input = inputManager(client, coin, amountFix, priceFix);
-    //     while (input === 100) {
-    //       await sleep(1000);
-    //       input = inputManager(client, coin, amountFix, priceFix);
-    //     }
-    //     if (position === 1) {
-    //       await Long(coin, amountFix, priceFix);
-    //     } else if (position === 2) {
-    //       await Short(coin, amountFix, priceFix);
-    //     } else if (position === 3) {
-    //       await LongScalpe(coin, amountFix, priceFix);
-    //     } else if (position === 4) {
-    //       await ShortScalpe(coin, amountFix, priceFix);
-    //     } else if (position === 5) {
-    //       await bug(coin, amountFix, priceFix);
-    //     }
-    //   } else if (position === 6) {
-    //     inputEnd(false);
-    //     await bugTwo("BTCUSDT", 3, 1);
-    //   }
-    // }
-    if (position !== 0) {
-      inputEnd(false);
-      let input = inputManager(client, coin, amountFix, priceFix);
-      while (input === 100) {
-        await sleep(1000);
-        input = inputManager(client, coin, amountFix, priceFix);
-      }
-      if (position === 1) {
-        await Long(coin, amountFix, priceFix);
-      } else if (position === 2) {
-        await Short(coin, amountFix, priceFix);
-      } else if (position === 3) {
-        await LongScalpe(coin, amountFix, priceFix);
-      } else if (position === 4) {
-        await ShortScalpe(coin, amountFix, priceFix);
-      } else if (position === 5) {
-        await bug(coin, amountFix, priceFix);
-      } else if (position === 6) {
-        await bugTwo("ETHUSDT", 3, 2);
-      }
-    }
-    await sleep(2500);
-  }
-}
-
-main();
+scalpe("WAVESUSDT", 1, 4, 2);
