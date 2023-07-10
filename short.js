@@ -292,6 +292,18 @@ async function Short(coinName, bbfix, fix) {
       }
       if (plusAmt === 0) {
         inputEnd(true);
+        let position_data = await binance.futuresPositionRisk(),
+          markets = Object.keys(position_data);
+        for (let market of markets) {
+          let obj = position_data[market];
+
+          if (obj.symbol === coinName && obj.positionSide === "LONG") {
+            const size = Number(obj.positionAmt);
+            if (size === 0) {
+              await cancleOrder(coinName);
+            }
+          }
+        }
         return;
       }
     }

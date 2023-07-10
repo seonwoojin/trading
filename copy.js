@@ -942,6 +942,7 @@ async function main() {
           await bug(coin, amountFix, priceFix);
         }
       } else if (position === 6) {
+        inputEnd(false);
         await bugTwo("BTCUSDT", 3, 1);
       }
     }
