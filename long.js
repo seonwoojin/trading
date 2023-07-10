@@ -373,27 +373,31 @@ async function inputEnd(bool) {
 }
 
 async function main() {
-  while (true) {
-    let array = await getManager(client);
-    while (array[0] * 1 == 100) {
-      await sleep(1000);
-      array = await getManager(client);
-    }
-    const coin = array[0];
-    const amountFix = array[1] * 1;
-    const priceFix = array[2] * 1;
-    const position = array[3] * 1;
-    if (position !== 0) {
-      if (position === 6) {
-        await inputEnd(false);
-        setTimeout(() => {
-          let input = inputManager(client, coin, amountFix, priceFix);
-        }, [10000]);
-        await Long(coin, amountFix, priceFix);
-      }
-    }
-    await sleep(3000);
-  }
+  let limitSell = await binance.futuresSell("ETHUSDT", "0.003", "1870.00", {
+    positionSide: "LONG",
+  });
+  console.log(limitSell);
+  // while (true) {
+  //   let array = await getManager(client);
+  //   while (array[0] * 1 == 100) {
+  //     await sleep(1000);
+  //     array = await getManager(client);
+  //   }
+  //   const coin = array[0];
+  //   const amountFix = array[1] * 1;
+  //   const priceFix = array[2] * 1;
+  //   const position = array[3] * 1;
+  //   if (position !== 0) {
+  //     if (position === 6) {
+  //       await inputEnd(false);
+  //       setTimeout(() => {
+  //         let input = inputManager(client, coin, amountFix, priceFix);
+  //       }, [10000]);
+  //       await Long(coin, amountFix, priceFix);
+  //     }
+  //   }
+  //   await sleep(3000);
+  // }
 }
 
 main();

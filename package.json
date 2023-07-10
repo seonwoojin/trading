@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bignumber.js": "^4.0.4",
     "dotenv": "^16.0.3",
     "googleapis": "^108.0.1",
     "node-binance-api": "^0.13.1",
@@ -39,6 +40,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }
