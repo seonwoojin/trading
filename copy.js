@@ -987,7 +987,7 @@ async function bugTwo(coinName, bbfix, fix) {
         }
       }
 
-      if (markPrice <= entryPrice * 0.99 && change && attempt == 0) {
+      if (markPrice <= shortEntryPrice * 0.99 && change && attempt == 0) {
         let MarketSell = await binance.futuresMarketBuy(coinName, minusAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
@@ -1196,12 +1196,14 @@ async function main() {
     //   }
     // }
     if (position !== 0) {
-      inputEnd(false);
-      let input = inputManager(client, coin, amountFix, priceFix);
-      while (input === 100) {
-        await sleep(1000);
-        input = inputManager(client, coin, amountFix, priceFix);
-      }
+      setTimeout(async () => {
+        inputEnd(false);
+        let input = inputManager(client, coin, amountFix, priceFix);
+        while (input === 100) {
+          await sleep(1000);
+          input = inputManager(client, coin, amountFix, priceFix);
+        }
+      }, 3000);
       if (position === 1) {
         await Long(coin, amountFix, priceFix);
       } else if (position === 2) {
