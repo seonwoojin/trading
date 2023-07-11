@@ -858,6 +858,7 @@ async function bugTwo(coinName, bbfix, fix) {
         json2 = await minusBalance(coinName);
       }
       let minusAmt = await getminusAmt(json2);
+      let markPrice = parseFloat(json1.markPrice);
       if (plusAmt === amt * 1 && minusAmt === hedgeAmt * 1 && !change) {
         let limitPrice = (shortEntryPrice * 0.999).toFixed(fix);
         await binance.futuresCancel(coinName, {
