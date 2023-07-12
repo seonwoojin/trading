@@ -176,7 +176,7 @@ async function bugTwo(coinName, bbfix, fix) {
     let longOrderId;
     let shortOrderId;
     let attempt = 0;
-    let per = 0.03;
+    let per = 0.02;
     await binance.useServerTime();
     await Leverage(40, coinName);
     await sleep(1000);
@@ -224,6 +224,7 @@ async function bugTwo(coinName, bbfix, fix) {
           }
         );
         shortOrderId = new BigNumber(limitSell.orderId);
+        console.log(shortOrderId);
         let MarketSell2 = await binance.futuresMarketBuy(coinName, amt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
@@ -393,7 +394,7 @@ async function bugTwo(coinName, bbfix, fix) {
               {
                 positionSide: "LONG",
                 type: "STOP_MARKET",
-                stopPrice: longEntryPrice * (1 + per - 0.01),
+                stopPrice: longEntryPrice * (1 + per - 0.005),
               }
             );
             successPrice = longEntryPrice * (1 + per + 0.005);
@@ -496,7 +497,7 @@ async function bugTwo(coinName, bbfix, fix) {
               {
                 positionSide: "SHORT",
                 type: "STOP_MARKET",
-                stopPrice: entryPrice * (1 - per + 0.01),
+                stopPrice: entryPrice * (1 - per + 0.005),
               }
             );
             successPrice = entryPrice * (1 - per - 0.005);
@@ -583,25 +584,7 @@ async function inputEnd(bool) {
 
 async function main() {
   while (true) {
-    let array = await getManager(client);
-    while (array[0] * 1 == 100) {
-      await sleep(1000);
-      array = await getManager(client);
-    }
-    const coin = array[0];
-    const amountFix = array[1] * 1;
-    const priceFix = array[2] * 1;
-    const position = array[3] * 1;
-    if (position !== 0) {
-      if (position === 1) {
-      } else if (position === 2) {
-      } else if (position === 3) {
-      } else if (position === 4) {
-      } else if (position === 5) {
-      } else if (position === 6) {
-        await bugTwo("BTCUSDT", 3, 1);
-      }
-    }
+    await bugTwo("BTCUSDT", 3, 1);
     await sleep(2500);
   }
 }

@@ -754,7 +754,7 @@ async function bugTwo(coinName, bbfix, fix) {
     let longOrderId;
     let shortOrderId;
     let attempt = 0;
-    let per = 0.03;
+    let per = 0.02;
     await binance.useServerTime();
     await Leverage(40, coinName);
     await sleep(1000);
@@ -972,7 +972,7 @@ async function bugTwo(coinName, bbfix, fix) {
               {
                 positionSide: "LONG",
                 type: "STOP_MARKET",
-                stopPrice: longEntryPrice * (1 + per - 0.01),
+                stopPrice: longEntryPrice * (1 + per - 0.005),
               }
             );
             successPrice = longEntryPrice * (1 + per + 0.005);
@@ -1075,7 +1075,7 @@ async function bugTwo(coinName, bbfix, fix) {
               {
                 positionSide: "SHORT",
                 type: "STOP_MARKET",
-                stopPrice: entryPrice * (1 - per + 0.01),
+                stopPrice: entryPrice * (1 - per + 0.005),
               }
             );
             successPrice = entryPrice * (1 - per - 0.005);
@@ -1160,7 +1160,7 @@ async function inputEnd(bool) {
   }
 }
 
-async function main() {
+async function main2() {
   while (true) {
     let array = await getManager(client);
     while (array[0] * 1 == 100) {
@@ -1218,6 +1218,13 @@ async function main() {
         await bugTwo("ETHUSDT", 3, 2);
       }
     }
+    await sleep(2500);
+  }
+}
+
+async function main() {
+  while (true) {
+    await bugTwo("ETHUSDT", 3, 2);
     await sleep(2500);
   }
 }
