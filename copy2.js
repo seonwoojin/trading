@@ -896,14 +896,14 @@ async function bugTwo(coinName, bbfix, fix) {
         dir = "SHORT";
         change = true;
       }
-      if (plusAmt === 0 && minusAmt !== 0 && attempt == 1 && dir === "LONG") {
+      if (plusAmt === 0 && minusAmt !== 0 && attempt == 2 && dir === "LONG") {
         let MarketSell = await binance.futuresMarketBuy(coinName, minusAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
           stopPrice: (shortStartPrice * 1.01).toFixed(fix),
         });
       }
-      if (minusAmt === 0 && plusAmt !== 0 && attempt == 1 && dir === "SHORT") {
+      if (minusAmt === 0 && plusAmt !== 0 && attempt == 2 && dir === "SHORT") {
         let MarketSell = await binance.futuresMarketSell(coinName, plusAmt, {
           positionSide: "LONG",
           type: "STOP_MARKET",
