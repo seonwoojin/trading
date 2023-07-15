@@ -166,6 +166,7 @@ async function Leverage(x, y) {
 
 async function bugTwo(coinName, bbfix, fix) {
   try {
+    console.log("start");
     let longStopPrice;
     let shortStopPrice;
     let longLimitPrice;
