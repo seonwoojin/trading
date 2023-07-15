@@ -794,7 +794,6 @@ async function bugTwo(coinName, bbfix, fix) {
         let limitSell = await binance.futuresBuy(coinName, allAmt, limitPrice, {
           positionSide: "SHORT",
         });
-        shortOrderId = new BigNumber(limitSell.orderId);
         let MarketSell2 = await binance.futuresMarketBuy(coinName, amt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
@@ -880,7 +879,6 @@ async function bugTwo(coinName, bbfix, fix) {
           type: "STOP_MARKET",
           stopPrice: (longEntryPrice * 0.98).toFixed(fix),
         });
-        longOrderId = new BigNumber(limitSell.orderId);
         dir = "SHORT";
         change = true;
       }
