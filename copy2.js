@@ -213,11 +213,6 @@ async function bugTwo(coinName, bbfix, fix) {
         shortStartPrice = obj.entryPrice * 1;
         let limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
         let stopPrice = (obj.entryPrice * 1.02).toFixed(fix);
-        let MarketSell = await binance.futuresMarketBuy(coinName, hedgeAmt, {
-          positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: stopPrice,
-        });
         let limitSell = await binance.futuresBuy(coinName, allAmt, limitPrice, {
           positionSide: "SHORT",
         });
@@ -235,11 +230,6 @@ async function bugTwo(coinName, bbfix, fix) {
         longStartPrice = obj.entryPrice * 1;
         let limitPrice = (obj.entryPrice * 1.01).toFixed(fix);
         let stopPrice = (obj.entryPrice * 0.98).toFixed(fix);
-        let MarketSell = await binance.futuresMarketSell(coinName, hedgeAmt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: stopPrice,
-        });
         let limitSell = await binance.futuresSell(
           coinName,
           allAmt,
@@ -284,6 +274,11 @@ async function bugTwo(coinName, bbfix, fix) {
             positionSide: "SHORT",
           }
         );
+        let MarketSell = await binance.futuresMarketBuy(coinName, hedgeAmt, {
+          positionSide: "SHORT",
+          type: "STOP_MARKET",
+          stopPrice: (shortEntryPrice * 1.02).toFixed(fix),
+        });
         dir = "LONG";
         change = true;
       }
@@ -302,11 +297,22 @@ async function bugTwo(coinName, bbfix, fix) {
             positionSide: "LONG",
           }
         );
+        let MarketSell = await binance.futuresMarketSell(coinName, hedgeAmt, {
+          positionSide: "LONG",
+          type: "STOP_MARKET",
+          stopPrice: (longEntryPrice * 0.98).toFixed(fix),
+        });
         longOrderId = new BigNumber(limitSell.orderId);
         dir = "SHORT";
         change = true;
       }
-      if (plusAmt >= allAmt * 0.9 && change && dir === "LONG") {
+      if (
+        plusAmt >= allAmt * 0.9 &&
+        minusAmt === 0 &&
+        change &&
+        dir === "LONG"
+      ) {
+        await cancelOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
         for (let market of markets) {
@@ -367,7 +373,13 @@ async function bugTwo(coinName, bbfix, fix) {
         }
       }
 
-      if (minusAmt >= allAmt * 0.9 && change && dir === "SHORT") {
+      if (
+        minusAmt >= allAmt * 0.9 &&
+        plusAmt === 0 &&
+        change &&
+        dir === "SHORT"
+      ) {
+        await cancelOrder(coinName);
         let position_data = await binance.futuresPositionRisk(),
           markets = Object.keys(position_data);
         for (let market of markets) {
