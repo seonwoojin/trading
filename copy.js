@@ -771,11 +771,11 @@ async function bugTwo(coinName, bbfix, fix) {
     const hedgeAmt = ((balance / coinPrices) * 5).toFixed(bbfix);
     const amt = (((balance / coinPrices) * 5) / 2).toFixed(bbfix);
     const allAmt = (hedgeAmt * 1 + amt * 1).toFixed(bbfix);
-    let MarketBuy = await binance.futuresMarketBuy(coinName, allAmt, {
+    let MarketBuy = await binance.futuresMarketBuy(coinName, hedgeAmt, {
       positionSide: "LONG",
     });
     let posAmt = amt;
-    let MarketSell = await binance.futuresMarketSell(coinName, allAmt, {
+    let MarketSell = await binance.futuresMarketSell(coinName, hedgeAmt, {
       positionSide: "SHORT",
     });
     await sleep(1000);
@@ -792,14 +792,19 @@ async function bugTwo(coinName, bbfix, fix) {
         shortStartPrice = obj.entryPrice * 1;
         let limitPrice = (obj.entryPrice * 0.99).toFixed(fix);
         let stopPrice = (obj.entryPrice * 1.02).toFixed(fix);
-        let limitSell = await binance.futuresBuy(coinName, allAmt, limitPrice, {
-          positionSide: "SHORT",
-        });
-        let MarketSell2 = await binance.futuresMarketBuy(coinName, amt, {
-          positionSide: "SHORT",
-          type: "STOP_MARKET",
-          stopPrice: shortStopPrice,
-        });
+        let limitSell = await binance.futuresBuy(
+          coinName,
+          hedgeAmt,
+          limitPrice,
+          {
+            positionSide: "SHORT",
+          }
+        );
+        // let MarketSell2 = await binance.futuresMarketBuy(coinName, amt, {
+        //   positionSide: "SHORT",
+        //   type: "STOP_MARKET",
+        //   stopPrice: shortStopPrice,
+        // });
       }
       if (obj.positionSide == "LONG" && obj.symbol == coinName) {
         longLimitPrice = (obj.entryPrice * 1.02).toFixed(fix);
@@ -810,17 +815,17 @@ async function bugTwo(coinName, bbfix, fix) {
         let stopPrice = (obj.entryPrice * 0.98).toFixed(fix);
         let limitSell = await binance.futuresSell(
           coinName,
-          allAmt,
+          hedgeAmt,
           limitPrice,
           {
             positionSide: "LONG",
           }
         );
-        let MarketSell2 = await binance.futuresMarketSell(coinName, amt, {
-          positionSide: "LONG",
-          type: "STOP_MARKET",
-          stopPrice: longStopPrice,
-        });
+        // let MarketSell2 = await binance.futuresMarketSell(coinName, amt, {
+        //   positionSide: "LONG",
+        //   type: "STOP_MARKET",
+        //   stopPrice: longStopPrice,
+        // });
       }
     }
     while (true) {
@@ -852,7 +857,7 @@ async function bugTwo(coinName, bbfix, fix) {
             positionSide: "SHORT",
           }
         );
-        let MarketSell = await binance.futuresMarketBuy(coinName, hedgeAmt, {
+        let MarketSell = await binance.futuresMarketBuy(coinName, minusAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
           stopPrice: (shortEntryPrice * 1.02).toFixed(fix),
@@ -875,7 +880,7 @@ async function bugTwo(coinName, bbfix, fix) {
             positionSide: "LONG",
           }
         );
-        let MarketSell = await binance.futuresMarketSell(coinName, hedgeAmt, {
+        let MarketSell = await binance.futuresMarketSell(coinName, plusAmt, {
           positionSide: "LONG",
           type: "STOP_MARKET",
           stopPrice: (longEntryPrice * 0.98).toFixed(fix),

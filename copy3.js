@@ -535,7 +535,7 @@ async function inputEnd(bool) {
 
 async function main() {
   while (true) {
-    await bugTwo("BTCUSDT", 3, 1);
+    await bugTwo("BNBUSDT", 2, 2);
     const abc = await getManagerStop(client);
     if (abc * 1 === 1) return;
     await sleep(2500);
