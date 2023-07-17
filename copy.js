@@ -865,7 +865,7 @@ async function bugTwo(coinName, bbfix, fix) {
         let limitSell2 = await binance.futuresMarketSell(coinName, allAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
-          stopPrice: (entryPrice * 0.98).toFixed(fix),
+          stopPrice: (longEntryPrice * 0.98).toFixed(fix),
         });
         let limitSell = await binance.futuresSell(
           coinName,
@@ -1003,10 +1003,10 @@ async function bugTwo(coinName, bbfix, fix) {
               {
                 positionSide: "SHORT",
                 type: "STOP_MARKET",
-                stopPrice: entryPrice * (1 - per + 0.005),
+                stopPrice: shortEntryPrice * (1 - per + 0.005),
               }
             );
-            successPrice = entryPrice * (1 - per - 0.005);
+            successPrice = shortEntryPrice * (1 - per - 0.005);
             per = per + 0.005;
           }
           if (minusAmt === 0) {
