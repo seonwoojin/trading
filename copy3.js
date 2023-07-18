@@ -392,7 +392,7 @@ async function bugTwo(coinName, bbfix, fix) {
           if (size == 0 && obj.symbol != coinName) continue;
           if (obj.positionSide == "SHORT" && obj.symbol == coinName) {
             let limitPrice = (obj.entryPrice * 0.95).toFixed(fix);
-            let stopPrice = (obj.entryPrice * 0.105).toFixed(fix);
+            let stopPrice = (obj.entryPrice * 1.005).toFixed(fix);
             successPrice = obj.entryPrice * (1 - per);
             shortEntryPrice = obj.entryPrice * 1;
             let limitSell = await binance.futuresBuy(
