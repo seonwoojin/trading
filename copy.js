@@ -755,7 +755,7 @@ async function bugTwo(coinName, bbfix, fix) {
     let longEntryPrice;
     let shortEntryPrice;
     let attempt = 0;
-    let per = 0.02;
+    let per = 0.01;
     let dir = "NONE";
     await binance.useServerTime();
     await Leverage(40, coinName);
@@ -847,7 +847,7 @@ async function bugTwo(coinName, bbfix, fix) {
         let limitBuy = await binance.futuresMarketBuy(coinName, allAmt, {
           positionSide: "LONG",
           type: "STOP_MARKET",
-          stopPrice: (longEntryPrice * 1.02).toFixed(fix),
+          stopPrice: (longEntryPrice * 1.015).toFixed(fix),
         });
         let limitSell = await binance.futuresBuy(
           coinName,
@@ -860,7 +860,7 @@ async function bugTwo(coinName, bbfix, fix) {
         let MarketSell = await binance.futuresMarketBuy(coinName, minusAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
-          stopPrice: (shortEntryPrice * 1.02).toFixed(fix),
+          stopPrice: (shortEntryPrice * 1.015).toFixed(fix),
         });
         dir = "LONG";
         change = true;
@@ -870,7 +870,7 @@ async function bugTwo(coinName, bbfix, fix) {
         let limitSell2 = await binance.futuresMarketSell(coinName, allAmt, {
           positionSide: "SHORT",
           type: "STOP_MARKET",
-          stopPrice: (longEntryPrice * 0.98).toFixed(fix),
+          stopPrice: (longEntryPrice * 0.985).toFixed(fix),
         });
         let limitSell = await binance.futuresSell(
           coinName,
@@ -883,7 +883,7 @@ async function bugTwo(coinName, bbfix, fix) {
         let MarketSell = await binance.futuresMarketSell(coinName, plusAmt, {
           positionSide: "LONG",
           type: "STOP_MARKET",
-          stopPrice: (longEntryPrice * 0.98).toFixed(fix),
+          stopPrice: (longEntryPrice * 0.985).toFixed(fix),
         });
         dir = "SHORT";
         change = true;
@@ -1034,6 +1034,7 @@ async function bugTwo(coinName, bbfix, fix) {
     console.log(error);
   }
 }
+
 async function getManager(client) {
   try {
     const sheets = google.sheets({ version: "v4", auth: client });
